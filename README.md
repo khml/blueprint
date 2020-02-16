@@ -2,14 +2,6 @@
 
 Now can parse only simple sentence.
 
-## EBNF
-
-expr = mul ( “+” mul | “-“ mul )* | identifier “=“ expr
-
-mul = primary ( “*” primary | “/“  primary | “%” primary )*
-
-primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ expr “)”
-
 ## Example
 
 ```
