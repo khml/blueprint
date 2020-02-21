@@ -23,8 +23,9 @@ namespace Token
             oss.str("");
         };
 
-        for (auto&& ch:line)
+        for (int i = 0; i < line.size(); i++)
         {
+            auto ch = line.substr(i, 1);
             kind = TokenKind::toTokenKind(ch);
             switch (kind)
             {

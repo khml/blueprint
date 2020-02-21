@@ -59,7 +59,7 @@ TokenKindValue = [
     ">",
     "<",
     "\\'",
-    "\"",
+    "\\\"",
     "&",
     "%",
     "$",
@@ -87,7 +87,7 @@ class Header:
 namespace TokenKind
 {{
 {content}\
-    TokenKind toTokenKind(char val);
+    TokenKind toTokenKind(std::string& val);
     
     std::string fromTokenKind(TokenKind val);
 }}
@@ -122,7 +122,7 @@ class Impl:
     IMPL_TEMPLATE = """\
 // This File is Auto Generated.
 
-#include <string>
+#include <map>
 
 #include "TokenKind.hpp"
 
@@ -148,8 +148,18 @@ namespace TokenKind
                 return {value};
 """
 
+    MAP_FORMAT = """\
+    static std::map<std::string, TokenKind> toTokenKindMap()
+    {{
+        return std::map<std::string, TokenKind> {{
+{impl}\
+        }};
+    }}
+
+"""
+
     def __init__(self):
-        impl_content = self._to_enum + self._to_str
+        impl_content = self._map + self._to_enum + self._to_str
         impl_content = self.IMPL_TEMPLATE.format(content=impl_content)
         with open(IMPL_FILE_NAME, "w") as f:
             f.write(impl_content)
@@ -165,12 +175,28 @@ namespace TokenKind
 
     @property
     def _to_enum(self):
-        to_enum_impl = ""
+        return """\
+    TokenKind toTokenKind(std::string& val)
+    {
+        static std::map<std::string, TokenKind> dictionary = toTokenKindMap();
+
+        auto iter = dictionary.find(val);
+        if ( iter != end(dictionary) ) {
+            return iter->second;
+        } else {
+            return IDENTIFIER;
+        }
+    };
+
+"""
+
+    @property
+    def _map(self):
+        map_impl = ""
+        item_format = "            {{\"{string}\", {kind}}},\n"
         for kind_name, kind_value in TokenKind.items():
-            to_enum_case = "default" if kind_name == "IDENTIFIER" else "case '{}'".format(kind_value)
-            to_enum_impl += self.CASE_FORMAT.format(case=to_enum_case, value=kind_name)
-        return self.SWITCH_FORMAT.format(return_type="TokenKind", arg_type="char", name="toTokenKind",
-                                         impl=to_enum_impl)
+            map_impl += item_format.format(string=kind_value, kind=kind_name) if kind_name != "IDENTIFIER" else ""
+        return self.MAP_FORMAT.format(impl=map_impl)
 
 
 def main():
