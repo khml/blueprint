@@ -49,11 +49,11 @@ namespace Parser
     {
         std::ostringstream dotFile;
         dotFile
-        << "digraph AST {" << std::endl
-        << "  graph [" << std::endl
-        << "    dpi = 300;" << std::endl
-        << "    ratio = 0.5;" << std::endl
-        << "  ]" << std::endl;
+            << "digraph AST {" << std::endl
+            << "  graph [" << std::endl
+            << "    dpi = 300;" << std::endl
+            << "    ratio = 0.5;" << std::endl
+            << "  ]" << std::endl;
         graph(dotFile);
         dotFile << "}" << std::endl;
 
@@ -145,7 +145,7 @@ namespace Parser
         while (hasNext())
         {
             if (current().kind == TokenKind::ASTERISK || current().kind == TokenKind::SLASH
-            || current().kind == TokenKind::PERCENT)
+                || current().kind == TokenKind::PERCENT)
             {
                 node = new Node(current().value, node, primary());
 #ifdef DEBUG_GRAPH

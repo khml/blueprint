@@ -29,17 +29,17 @@ namespace Token
             kind = TokenKind::toTokenKind(ch);
             switch (kind)
             {
-            case TokenKind::IDENTIFIER:
-                oss << ch;
-                break;
-            case TokenKind::WHITESPACE:
-                putString(TokenKind::IDENTIFIER);
-                break;
-            default:
-                putString(TokenKind::IDENTIFIER);
-                oss << ch;
-                putString(kind);
-                break;
+                case TokenKind::IDENTIFIER:
+                    oss << ch;
+                    break;
+                case TokenKind::WHITESPACE:
+                    putString(TokenKind::IDENTIFIER);
+                    break;
+                default:
+                    putString(TokenKind::IDENTIFIER);
+                    oss << ch;
+                    putString(kind);
+                    break;
             }
         }
         putString(TokenKind::IDENTIFIER);
