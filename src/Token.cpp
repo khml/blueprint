@@ -6,16 +6,16 @@
 
 #include "Token.hpp"
 
-namespace Token
+namespace token
 {
     void tokenize(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
-        TokenKind kind;
+        tokenKind::TokenKind kind;
 
-        tokens.emplace_back(Token(LINE_START, ""));
+        tokens.emplace_back(Token(tokenKind::LINE_START, ""));
 
-        auto putString = [&oss, &tokens](TokenKind kind) -> void
+        auto putString = [&oss, &tokens](tokenKind::TokenKind kind) -> void
         {
             if (oss.str().empty())
                 return;
@@ -23,24 +23,25 @@ namespace Token
             oss.str("");
         };
 
-        for (auto&& ch:line)
+        for (int i = 0; i < line.size(); i++)
         {
-            kind = toTokenKind(ch);
+            auto ch = line.substr(i, 1);
+            kind = tokenKind::toTokenKind(ch);
             switch (kind)
             {
-                case IDENTIFIER:
+                case tokenKind::IDENTIFIER:
                     oss << ch;
                     break;
-                case WHITESPACE:
-                    putString(IDENTIFIER);
+                case tokenKind::WHITESPACE:
+                    putString(tokenKind::IDENTIFIER);
                     break;
                 default:
-                    putString(IDENTIFIER);
+                    putString(tokenKind::IDENTIFIER);
                     oss << ch;
                     putString(kind);
                     break;
             }
         }
-        putString(IDENTIFIER);
+        putString(tokenKind::IDENTIFIER);
     }
 }
