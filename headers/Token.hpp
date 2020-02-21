@@ -15,12 +15,12 @@ namespace Token
     class Token
     {
     public:
-        Token(TokenKind kind, std::string&& value) : kind(kind), value(value)
+        Token(TokenKind::TokenKind kind, std::string&& value) :kind(kind), value(value)
         {};
 
         virtual ~Token()
         {};
-        const TokenKind kind;
+        const TokenKind::TokenKind kind;
         const std::string value;
 
         std::string token()

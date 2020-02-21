@@ -11,11 +11,11 @@ namespace Token
     void tokenize(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
-        TokenKind kind;
+        TokenKind::TokenKind kind;
 
-        tokens.emplace_back(Token(LINE_START, ""));
+        tokens.emplace_back(Token(TokenKind::LINE_START, ""));
 
-        auto putString = [&oss, &tokens](TokenKind kind) -> void
+        auto putString = [&oss, &tokens](TokenKind::TokenKind kind) -> void
         {
             if (oss.str().empty())
                 return;
@@ -25,22 +25,22 @@ namespace Token
 
         for (auto&& ch:line)
         {
-            kind = toTokenKind(ch);
+            kind = TokenKind::toTokenKind(ch);
             switch (kind)
             {
-                case IDENTIFIER:
-                    oss << ch;
-                    break;
-                case WHITESPACE:
-                    putString(IDENTIFIER);
-                    break;
-                default:
-                    putString(IDENTIFIER);
-                    oss << ch;
-                    putString(kind);
-                    break;
+            case TokenKind::IDENTIFIER:
+                oss << ch;
+                break;
+            case TokenKind::WHITESPACE:
+                putString(TokenKind::IDENTIFIER);
+                break;
+            default:
+                putString(TokenKind::IDENTIFIER);
+                oss << ch;
+                putString(kind);
+                break;
             }
         }
-        putString(IDENTIFIER);
+        putString(TokenKind::IDENTIFIER);
     }
 }

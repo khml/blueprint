@@ -124,7 +124,7 @@ namespace Parser
 
         while (hasNext())
         {
-            if (current().kind == Token::ADD || current().kind == Token::SUB)
+            if (current().kind == TokenKind::ADD || current().kind == TokenKind::SUB)
             {
                 node = new Node(current().value, node, mul());
 #ifdef DEBUG_GRAPH
@@ -144,7 +144,8 @@ namespace Parser
         Node* node = primary();
         while (hasNext())
         {
-            if (current().kind == Token::ASTERISK || current().kind == Token::SLASH || current().kind == Token::PERCENT)
+            if (current().kind == TokenKind::ASTERISK || current().kind == TokenKind::SLASH
+            || current().kind == TokenKind::PERCENT)
             {
                 node = new Node(current().value, node, primary());
 #ifdef DEBUG_GRAPH
@@ -164,22 +165,22 @@ namespace Parser
         moveNext();
 
         Node* node;
-        if (current().kind == Token::PARENTHESIS_LEFT)
+        if (current().kind == TokenKind::PARENTHESIS_LEFT)
         {
             node = expression();
-            if (hasNext() && current().kind != Token::PARENTHESISE_RIGHT)
+            if (hasNext() && current().kind != TokenKind::PARENTHESISE_RIGHT)
             {
                 std::cerr << "expected ')' but given token-kind=" <<
-                          Token::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+                          TokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
                 exit(1);
             }
         }
-        else if (current().kind == Token::IDENTIFIER)
+        else if (current().kind == TokenKind::IDENTIFIER)
             node = new Node(current().value);
         else
         {
             std::cerr << "expected IDENTIFIER Token, but given token-kind=" <<
-                      Token::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+                      TokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         }
 

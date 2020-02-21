@@ -99,6 +99,7 @@ namespace TokenKind
     enum TokenKind
     {{\
 {impl}
+        LINE_START,
     }};
 """
 

@@ -25,8 +25,11 @@ namespace Parser
         Node(std::string str, Node* left, Node* right);
 
         ~Node();
+
 #ifdef DEBUG_NODE
+
         void print();
+
 #endif
         std::string str;
         Node* left = nullptr;
