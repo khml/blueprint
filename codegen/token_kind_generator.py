@@ -140,6 +140,8 @@ namespace {namespace}
     {{
         switch (val)
         {{
+            case LINE_START:
+                return "LINE_START";
 {impl}
         }}
     }};
