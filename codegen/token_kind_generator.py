@@ -36,7 +36,7 @@ TokenKindName = [
     "UNDER_BAR",
     "BACKSLASH",
     "WHITESPACE",
-    "IDENTIFIER",
+    "NEW_LINE",
 ]
 
 TokenKindValue = [
@@ -69,12 +69,14 @@ TokenKindValue = [
     "_",
     "\\\\",
     " ",
+    "\\n",
     "",
 ]
 
 TokenKind = OrderedDict()
 for name, value in zip(TokenKindName, TokenKindValue):
     TokenKind[name] = value
+TokenKind["IDENTIFIER"] = ""
 
 
 class Header:
