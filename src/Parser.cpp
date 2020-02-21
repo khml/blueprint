@@ -12,7 +12,7 @@
 
 #include "Parser.hpp"
 
-namespace Parser
+namespace parser
 {
     Node::Node(std::string str) :str(str)
     {}
@@ -91,7 +91,7 @@ namespace Parser
     std::unique_ptr<Node> Parser::parse(std::string& line)
     {
         tokens.clear();
-        Token::tokenize(line, tokens);
+        token::tokenize(line, tokens);
         auto node = std::unique_ptr<Node>(expression());
 
         return node;
@@ -102,17 +102,17 @@ namespace Parser
         return tokenHead + 1 < tokens.size();
     }
 
-    Token::Token Parser::current()
+    token::Token Parser::current()
     {
         return tokens[tokenHead];
     }
 
-    Token::Token Parser::moveNext()
+    token::Token Parser::moveNext()
     {
         return tokens[++tokenHead];
     }
 
-    Token::Token Parser::prev()
+    token::Token Parser::prev()
     {
         return tokens[tokenHead - 1];
     }
@@ -124,7 +124,7 @@ namespace Parser
 
         while (hasNext())
         {
-            if (current().kind == TokenKind::ADD || current().kind == TokenKind::SUB)
+            if (current().kind == tokenKind::ADD || current().kind == tokenKind::SUB)
             {
                 node = new Node(current().value, node, mul());
 #ifdef DEBUG_GRAPH
@@ -144,8 +144,8 @@ namespace Parser
         Node* node = primary();
         while (hasNext())
         {
-            if (current().kind == TokenKind::ASTERISK || current().kind == TokenKind::SLASH
-                || current().kind == TokenKind::PERCENT)
+            if (current().kind == tokenKind::ASTERISK || current().kind == tokenKind::SLASH
+                || current().kind == tokenKind::PERCENT)
             {
                 node = new Node(current().value, node, primary());
 #ifdef DEBUG_GRAPH
@@ -165,22 +165,22 @@ namespace Parser
         moveNext();
 
         Node* node;
-        if (current().kind == TokenKind::PARENTHESIS_LEFT)
+        if (current().kind == tokenKind::PARENTHESIS_LEFT)
         {
             node = expression();
-            if (hasNext() && current().kind != TokenKind::PARENTHESISE_RIGHT)
+            if (hasNext() && current().kind != tokenKind::PARENTHESISE_RIGHT)
             {
                 std::cerr << "expected ')' but given token-kind=" <<
-                          TokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+                          tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
                 exit(1);
             }
         }
-        else if (current().kind == TokenKind::IDENTIFIER)
+        else if (current().kind == tokenKind::IDENTIFIER)
             node = new Node(current().value);
         else
         {
-            std::cerr << "expected IDENTIFIER Token, but given token-kind=" <<
-                      TokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            std::cerr << "expected IDENTIFIER token, but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         }
 

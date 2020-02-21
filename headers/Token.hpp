@@ -10,17 +10,17 @@
 
 #include "TokenKind.hpp"
 
-namespace Token
+namespace token
 {
     class Token
     {
     public:
-        Token(TokenKind::TokenKind kind, std::string&& value) :kind(kind), value(value)
+        Token(tokenKind::TokenKind kind, std::string&& value) :kind(kind), value(value)
         {};
 
         virtual ~Token()
         {};
-        const TokenKind::TokenKind kind;
+        const tokenKind::TokenKind kind;
         const std::string value;
 
         std::string token()

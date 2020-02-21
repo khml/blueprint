@@ -15,7 +15,7 @@
 
 #include "Token.hpp"
 
-namespace Parser
+namespace parser
 {
     class Node
     {
@@ -58,17 +58,17 @@ namespace Parser
         void print();
 
     protected:
-        std::vector<Token::Token> tokens;
+        std::vector<token::Token> tokens;
 
         int tokenHead = 0;
 
         bool hasNext();
 
-        Token::Token moveNext();
+        token::Token moveNext();
 
-        Token::Token prev();
+        token::Token prev();
 
-        Token::Token current();
+        token::Token current();
 
         Node* expression();
 

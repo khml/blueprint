@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 HEADER_FILE_NAME = "../headers/TokenKind.hpp"
 IMPL_FILE_NAME = "../src/TokenKind.cpp"
+NAME_SPACE = "tokenKind"
 
 TokenKindName = [
     "ADD",
@@ -84,7 +85,7 @@ class Header:
 
 #include <string>
 
-namespace TokenKind
+namespace {namespace}
 {{
 {content}\
     TokenKind toTokenKind(std::string& val);
@@ -106,7 +107,7 @@ namespace TokenKind
     ITEM_FORMAT = "\n        {kind}, /* {value} */"
 
     def __init__(self):
-        header_content = self.HEADER_TEMPLATE.format(content=self._enum)
+        header_content = self.HEADER_TEMPLATE.format(namespace=NAME_SPACE, content=self._enum)
         with open(HEADER_FILE_NAME, "w") as f:
             f.write(header_content)
 
@@ -126,7 +127,7 @@ class Impl:
 
 #include "TokenKind.hpp"
 
-namespace TokenKind
+namespace {namespace}
 {{
 {content}\
 }}
@@ -160,7 +161,7 @@ namespace TokenKind
 
     def __init__(self):
         impl_content = self._map + self._to_enum + self._to_str
-        impl_content = self.IMPL_TEMPLATE.format(content=impl_content)
+        impl_content = self.IMPL_TEMPLATE.format(namespace=NAME_SPACE, content=impl_content)
         with open(IMPL_FILE_NAME, "w") as f:
             f.write(impl_content)
 
