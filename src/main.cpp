@@ -21,7 +21,7 @@ int main()
         if (line == "end")
             break;
 
-        auto parser = Parser::Parser();
+        auto parser = parser::Parser();
         auto node = parser.parse(line);
 #ifdef DEBUG_NODE
         node->print();
