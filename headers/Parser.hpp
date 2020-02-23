@@ -53,9 +53,8 @@ namespace parser
 
         ~Parser();
 
-        std::unique_ptr<Node> parse(std::string& line);
+        std::unique_ptr<Node> parse(std::vector<token::Token> tokenList);
 
-        void print();
 
     protected:
         std::vector<token::Token> tokens;

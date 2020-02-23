@@ -80,18 +80,10 @@ namespace parser
     Parser::~Parser()
     {}
 
-    void Parser::print()
-    {
-        for (auto token : tokens)
-        {
-            std::cerr << token.value << " | " << token.token() << std::endl;
-        }
-    }
-
-    std::unique_ptr<Node> Parser::parse(std::string& line)
+    std::unique_ptr<Node> Parser::parse(std::vector<token::Token> tokenList)
     {
         tokens.clear();
-        token::tokenize(line, tokens);
+        tokens.swap(tokenList);
         auto node = std::unique_ptr<Node>(expression());
 
         return node;

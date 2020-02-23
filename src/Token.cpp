@@ -2,12 +2,21 @@
 // Created by KHML on 2020/01/08.
 //
 
+#include "iostream"
 #include <sstream>
 
 #include "Token.hpp"
 
 namespace token
 {
+    void printTokens(std::vector<Token>& tokens)
+    {
+        for (auto token : tokens)
+        {
+            std::cerr << token.value << " | " << token.token() << std::endl;
+        }
+    }
+
     void tokenize(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
