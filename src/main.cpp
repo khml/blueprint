@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+#include "Token.hpp"
 #include "Parser.hpp"
 
 using std::string;
@@ -21,12 +22,15 @@ int main()
         if (line == "end")
             break;
 
-        auto parser = parser::Parser();
-        auto node = parser.parse(line);
+        std::vector<Lexer::Token> tokens;
+        Lexer::tokenize(line, tokens);
+        Lexer::printTokens(tokens);
+
+        auto parser = AST::Parser();
+        auto node = parser.parse(tokens);
 #ifdef DEBUG_NODE
         node->print();
 #endif
-        parser.print();
 #ifdef DEBUG_GRAPH
         node->graph();
 #endif

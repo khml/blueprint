@@ -15,7 +15,7 @@
 
 #include "Token.hpp"
 
-namespace parser
+namespace AST
 {
     class Node
     {
@@ -53,22 +53,21 @@ namespace parser
 
         ~Parser();
 
-        std::unique_ptr<Node> parse(std::string& line);
+        std::unique_ptr<Node> parse(std::vector<Lexer::Token> tokenList);
 
-        void print();
 
     protected:
-        std::vector<token::Token> tokens;
+        std::vector<Lexer::Token> tokens;
 
         int tokenHead = 0;
 
         bool hasNext();
 
-        token::Token moveNext();
+        Lexer::Token moveNext();
 
-        token::Token prev();
+        Lexer::Token prev();
 
-        token::Token current();
+        Lexer::Token current();
 
         Node* expression();
 
