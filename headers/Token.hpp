@@ -10,7 +10,7 @@
 
 #include "TokenKind.hpp"
 
-namespace token
+namespace Lexer
 {
     class Token
     {
@@ -26,6 +26,8 @@ namespace token
         std::string token()
         { return fromTokenKind(kind); };
     };
+
+    void printTokens(std::vector<Token>& tokens);
 
     void tokenize(const std::string& line, std::vector<Token>& tokens);
 }
