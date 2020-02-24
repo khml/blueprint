@@ -22,11 +22,11 @@ int main()
         if (line == "end")
             break;
 
-        std::vector<token::Token> tokens;
-        token::tokenize(line, tokens);
-        token::printTokens(tokens);
+        std::vector<Lexer::Token> tokens;
+        Lexer::tokenize(line, tokens);
+        Lexer::printTokens(tokens);
 
-        auto parser = parser::Parser();
+        auto parser = AST::Parser();
         auto node = parser.parse(tokens);
 #ifdef DEBUG_NODE
         node->print();

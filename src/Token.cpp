@@ -7,7 +7,7 @@
 
 #include "Token.hpp"
 
-namespace token
+namespace Lexer
 {
     void printTokens(std::vector<Token>& tokens)
     {

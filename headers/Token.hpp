@@ -10,7 +10,7 @@
 
 #include "TokenKind.hpp"
 
-namespace token
+namespace Lexer
 {
     class Token
     {

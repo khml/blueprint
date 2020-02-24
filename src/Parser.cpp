@@ -12,7 +12,7 @@
 
 #include "Parser.hpp"
 
-namespace parser
+namespace AST
 {
     Node::Node(std::string str) :str(str)
     {}
@@ -80,7 +80,7 @@ namespace parser
     Parser::~Parser()
     {}
 
-    std::unique_ptr<Node> Parser::parse(std::vector<token::Token> tokenList)
+    std::unique_ptr<Node> Parser::parse(std::vector<Lexer::Token> tokenList)
     {
         tokens.clear();
         tokens.swap(tokenList);
@@ -94,17 +94,17 @@ namespace parser
         return tokenHead + 1 < tokens.size();
     }
 
-    token::Token Parser::current()
+    Lexer::Token Parser::current()
     {
         return tokens[tokenHead];
     }
 
-    token::Token Parser::moveNext()
+    Lexer::Token Parser::moveNext()
     {
         return tokens[++tokenHead];
     }
 
-    token::Token Parser::prev()
+    Lexer::Token Parser::prev()
     {
         return tokens[tokenHead - 1];
     }
