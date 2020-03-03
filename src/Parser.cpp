@@ -4,12 +4,7 @@
 
 #include <iostream>
 
-#ifdef DEBUG2
-#define LOG2(value) std::cerr << value << std::endl
-#else
-#define LOG2(value)
-#endif
-
+#include "MacroLogger.hpp"
 #include "Parser.hpp"
 
 namespace AST
