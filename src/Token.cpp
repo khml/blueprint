@@ -17,7 +17,7 @@ namespace Lexer
         }
     }
 
-    void tokenize(const std::string& line, std::vector<Token>& tokens)
+    void singleCharTokenize(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
         tokenKind::TokenKind kind;
@@ -54,5 +54,10 @@ namespace Lexer
             }
         }
         putString(tokenKind::IDENTIFIER);
+    }
+
+    void tokenize(const std::string& line, std::vector<Token>& tokens)
+    {
+        singleCharTokenize(line, tokens);
     }
 }
