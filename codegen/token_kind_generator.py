@@ -150,9 +150,9 @@ namespace {namespace}
     @property
     def _to_str(self):
         to_str_impl = ""
-        for kind_name, kind_value in TokenKind.items():
-            to_str_case = "default" if kind_name == "IDENTIFIER" else "case {}".format(kind_name)
-            to_str_impl += self.CASE_FORMAT.format(case=to_str_case, value='"{}"'.format(kind_name))
+        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+            to_str_impl += self.CASE_FORMAT.format(case="case {}".format(kind_name), value='"{}"'.format(kind_name))
+        to_str_impl += self.CASE_FORMAT.format(case="default", value='"{}"'.format("IDENTIFIER"))
         return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="Kind", name="fromTokenKind",
                                          impl=to_str_impl)
 
