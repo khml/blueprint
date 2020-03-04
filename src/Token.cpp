@@ -43,6 +43,8 @@ namespace Lexer
                     break;
                 case tokenKind::WHITESPACE:
                     putString(tokenKind::IDENTIFIER);
+                    oss << ch;
+                    putString(tokenKind::WHITESPACE);
                     break;
                 default:
                     putString(tokenKind::IDENTIFIER);
