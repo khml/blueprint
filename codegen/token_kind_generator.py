@@ -24,8 +24,8 @@ TokenKind = OrderedDict([
     ('COLON', ':'),
     ('SEMICOLON', ';'),
     ('INTERROGATION', '?'),
-    ('GRATER', '>'),
-    ('LESS', '<'),
+    ('GRATER_THAN', '>'),
+    ('LESSER_THAN', '<'),
     ('APOSTROPHE', "\\'"),
     ('QUOTATION', '\\"'),
     ('AMPERSAND', '&'),
@@ -38,6 +38,18 @@ TokenKind = OrderedDict([
     ('WHITESPACE', ' '),
     ('NEW_LINE', '\\n'),
     ('IDENTIFIER', '')
+])
+
+TokenKindTwoChar = OrderedDict([
+    ("EQUIVALENCE", "=="),
+    ("GRATER", ">="),
+    ("LESSER", "<="),
+    ("INCREMENTAL", "++"),
+    ("DECREMENTAL", "--"),
+    ("AND", "&&"),
+    ("OR", "||"),
+    ("COMMENT_START", "/*"),
+    ("COMMENT_END", "*/"),
 ])
 
 
@@ -69,6 +81,7 @@ namespace {namespace}
 """
 
     ITEM_FORMAT = "\n        {kind}, /* {value} */"
+    ITEM_FORMAT_FOR_COMMENT_TOKEN = "\n        {kind}, // {value}"
 
     def __init__(self):
         header_content = self.HEADER_TEMPLATE.format(namespace=NAME_SPACE, content=self._enum)
@@ -78,8 +91,11 @@ namespace {namespace}
     @property
     def _enum(self):
         enum_impl = ""
-        for kind_name, kind_value in TokenKind.items():
-            enum_impl += self.ITEM_FORMAT.format(kind=kind_name, value=kind_value)
+        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+            if kind_name in ["COMMENT_START", "COMMENT_END"]:
+                enum_impl += self.ITEM_FORMAT_FOR_COMMENT_TOKEN.format(kind=kind_name, value=kind_value)
+            else:
+                enum_impl += self.ITEM_FORMAT.format(kind=kind_name, value=kind_value)
         return self.ENUM_TEMPLATE.format(impl=enum_impl)
 
 
