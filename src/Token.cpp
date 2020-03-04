@@ -20,11 +20,11 @@ namespace Lexer
     void singleCharTokenize(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
-        tokenKind::TokenKind kind;
+        tokenKind::Kind kind;
 
         tokens.emplace_back(Token(tokenKind::LINE_START, ""));
 
-        auto putString = [&oss, &tokens](tokenKind::TokenKind kind) -> void
+        auto putString = [&oss, &tokens](tokenKind::Kind kind) -> void
         {
             if (oss.str().empty())
                 return;

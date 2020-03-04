@@ -64,16 +64,16 @@ class Header:
 namespace {namespace}
 {{
 {content}\
-    TokenKind toTokenKind(std::string& val);
+    Kind toTokenKind(std::string& val);
     
-    std::string fromTokenKind(TokenKind val);
+    std::string fromTokenKind(Kind val);
 }}
 
 #endif //BLUEPRINT_TOKEN_KIND_HPP
 """
 
     ENUM_TEMPLATE = """\
-    enum TokenKind
+    enum Kind
     {{\
 {impl}
         LINE_START,
@@ -132,9 +132,9 @@ namespace {namespace}
 """
 
     MAP_FORMAT = """\
-    static std::map<std::string, TokenKind> toTokenKindMap()
+    static std::map<std::string, Kind> toTokenKindMap()
     {{
-        return std::map<std::string, TokenKind> {{
+        return std::map<std::string, Kind> {{
 {impl}\
         }};
     }}
@@ -153,15 +153,15 @@ namespace {namespace}
         for kind_name, kind_value in TokenKind.items():
             to_str_case = "default" if kind_name == "IDENTIFIER" else "case {}".format(kind_name)
             to_str_impl += self.CASE_FORMAT.format(case=to_str_case, value='"{}"'.format(kind_name))
-        return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="TokenKind", name="fromTokenKind",
+        return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="Kind", name="fromTokenKind",
                                          impl=to_str_impl)
 
     @property
     def _to_enum(self):
         return """\
-    TokenKind toTokenKind(std::string& val)
+    Kind toTokenKind(std::string& val)
     {
-        static std::map<std::string, TokenKind> dictionary = toTokenKindMap();
+        static std::map<std::string, Kind> dictionary = toTokenKindMap();
 
         auto iter = dictionary.find(val);
         if ( iter != end(dictionary) ) {
