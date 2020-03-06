@@ -15,12 +15,12 @@ namespace Lexer
     class Token
     {
     public:
-        Token(tokenKind::TokenKind kind, std::string&& value) :kind(kind), value(value)
+        Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value)
         {};
 
         virtual ~Token()
         {};
-        const tokenKind::TokenKind kind;
+        const tokenKind::Kind kind;
         const std::string value;
 
         std::string token()

@@ -24,8 +24,8 @@ TokenKind = OrderedDict([
     ('COLON', ':'),
     ('SEMICOLON', ';'),
     ('INTERROGATION', '?'),
-    ('GRATER', '>'),
-    ('LESS', '<'),
+    ('GRATER_THAN', '>'),
+    ('LESSER_THAN', '<'),
     ('APOSTROPHE', "\\'"),
     ('QUOTATION', '\\"'),
     ('AMPERSAND', '&'),
@@ -40,6 +40,18 @@ TokenKind = OrderedDict([
     ('IDENTIFIER', '')
 ])
 
+TokenKindTwoChar = OrderedDict([
+    ("EQUIVALENCE", "=="),
+    ("GRATER", ">="),
+    ("LESSER", "<="),
+    ("INCREMENTAL", "++"),
+    ("DECREMENTAL", "--"),
+    ("AND", "&&"),
+    ("OR", "||"),
+    ("COMMENT_START", "/*"),
+    ("COMMENT_END", "*/"),
+])
+
 
 class Header:
     HEADER_TEMPLATE = """\
@@ -52,16 +64,16 @@ class Header:
 namespace {namespace}
 {{
 {content}\
-    TokenKind toTokenKind(std::string& val);
+    Kind toTokenKind(std::string& val);
     
-    std::string fromTokenKind(TokenKind val);
+    std::string fromTokenKind(Kind val);
 }}
 
 #endif //BLUEPRINT_TOKEN_KIND_HPP
 """
 
     ENUM_TEMPLATE = """\
-    enum TokenKind
+    enum Kind
     {{\
 {impl}
         LINE_START,
@@ -69,6 +81,7 @@ namespace {namespace}
 """
 
     ITEM_FORMAT = "\n        {kind}, /* {value} */"
+    ITEM_FORMAT_FOR_COMMENT_TOKEN = "\n        {kind}, // {value}"
 
     def __init__(self):
         header_content = self.HEADER_TEMPLATE.format(namespace=NAME_SPACE, content=self._enum)
@@ -78,8 +91,11 @@ namespace {namespace}
     @property
     def _enum(self):
         enum_impl = ""
-        for kind_name, kind_value in TokenKind.items():
-            enum_impl += self.ITEM_FORMAT.format(kind=kind_name, value=kind_value)
+        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+            if kind_name in ["COMMENT_START", "COMMENT_END"]:
+                enum_impl += self.ITEM_FORMAT_FOR_COMMENT_TOKEN.format(kind=kind_name, value=kind_value)
+            else:
+                enum_impl += self.ITEM_FORMAT.format(kind=kind_name, value=kind_value)
         return self.ENUM_TEMPLATE.format(impl=enum_impl)
 
 
@@ -116,9 +132,9 @@ namespace {namespace}
 """
 
     MAP_FORMAT = """\
-    static std::map<std::string, TokenKind> toTokenKindMap()
+    static std::map<std::string, Kind> toTokenKindMap()
     {{
-        return std::map<std::string, TokenKind> {{
+        return std::map<std::string, Kind> {{
 {impl}\
         }};
     }}
@@ -134,18 +150,18 @@ namespace {namespace}
     @property
     def _to_str(self):
         to_str_impl = ""
-        for kind_name, kind_value in TokenKind.items():
-            to_str_case = "default" if kind_name == "IDENTIFIER" else "case {}".format(kind_name)
-            to_str_impl += self.CASE_FORMAT.format(case=to_str_case, value='"{}"'.format(kind_name))
-        return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="TokenKind", name="fromTokenKind",
+        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+            to_str_impl += self.CASE_FORMAT.format(case="case {}".format(kind_name), value='"{}"'.format(kind_name))
+        to_str_impl += self.CASE_FORMAT.format(case="default", value='"{}"'.format("IDENTIFIER"))
+        return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="Kind", name="fromTokenKind",
                                          impl=to_str_impl)
 
     @property
     def _to_enum(self):
         return """\
-    TokenKind toTokenKind(std::string& val)
+    Kind toTokenKind(std::string& val)
     {
-        static std::map<std::string, TokenKind> dictionary = toTokenKindMap();
+        static std::map<std::string, Kind> dictionary = toTokenKindMap();
 
         auto iter = dictionary.find(val);
         if ( iter != end(dictionary) ) {
