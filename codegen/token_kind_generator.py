@@ -37,10 +37,7 @@ TokenKind = OrderedDict([
     ('BACKSLASH', '\\\\'),
     ('WHITESPACE', ' '),
     ('NEW_LINE', '\\n'),
-    ('IDENTIFIER', '')
-])
-
-TokenKindTwoChar = OrderedDict([
+    ('IDENTIFIER', ''),
     ("EQUIVALENCE", "=="),
     ("GRATER", ">="),
     ("LESSER", "<="),
@@ -63,7 +60,7 @@ class Header:
 
 namespace {namespace}
 {{
-{content}\
+{content}
     Kind toTokenKind(std::string& val);
     
     std::string fromTokenKind(Kind val);
@@ -91,7 +88,7 @@ namespace {namespace}
     @property
     def _enum(self):
         enum_impl = ""
-        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+        for kind_name, kind_value in TokenKind.items():
             if kind_name in ["COMMENT_START", "COMMENT_END"]:
                 enum_impl += self.ITEM_FORMAT_FOR_COMMENT_TOKEN.format(kind=kind_name, value=kind_value)
             else:
@@ -150,7 +147,7 @@ namespace {namespace}
     @property
     def _to_str(self):
         to_str_impl = ""
-        for kind_name, kind_value in [*TokenKind.items(), *TokenKindTwoChar.items()]:
+        for kind_name, kind_value in TokenKind.items():
             to_str_impl += self.CASE_FORMAT.format(case="case {}".format(kind_name), value='"{}"'.format(kind_name))
         to_str_impl += self.CASE_FORMAT.format(case="default", value='"{}"'.format("IDENTIFIER"))
         return self.SWITCH_FORMAT.format(return_type="std::string", arg_type="Kind", name="fromTokenKind",
