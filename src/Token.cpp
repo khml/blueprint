@@ -17,7 +17,7 @@ namespace Lexer
         }
     }
 
-    void singleCharTokenize(const std::string& line, std::vector<Token>& tokens)
+    void lex(const std::string& line, std::vector<Token>& tokens)
     {
         std::ostringstream oss;
         tokenKind::Kind kind;
@@ -32,12 +32,45 @@ namespace Lexer
             oss.str("");
         };
 
-        for (int i = 0; i < line.size(); i++)
+        std::string ch;
+        int idx = 0;
+        auto setIfNext = [&oss, &line, &idx, &ch, &kind, &putString]
+            (tokenKind::Kind expect, tokenKind::Kind&& replace) -> void
         {
-            auto ch = line.substr(i, 1);
+            putString(tokenKind::IDENTIFIER);
+            oss << ch;
+
+            if (++idx >= line.size())
+            {
+                --idx;
+                putString(kind);
+                return;
+            }
+
+            ch = line.substr(idx, 1);
+            if (tokenKind::toTokenKind(ch) == expect)
+            {
+                oss << ch;
+                putString(replace);
+            }
+            else
+            {
+                --idx;
+                putString(kind);
+            }
+        };
+
+        for (; idx < line.size(); idx++)
+        {
+            ch = line.substr(idx, 1);
             kind = tokenKind::toTokenKind(ch);
             switch (kind)
             {
+                /*
+                 * if token is identifier, stored the one char.
+                 * if token is whitespace, tokenize stored strings.
+                 * else, tokenize stored strings, and put the token.
+                 */
                 case tokenKind::IDENTIFIER:
                     oss << ch;
                     break;
@@ -45,6 +78,33 @@ namespace Lexer
                     putString(tokenKind::IDENTIFIER);
                     oss << ch;
                     putString(tokenKind::WHITESPACE);
+                    break;
+                case tokenKind::ADD:
+                    setIfNext(tokenKind::ADD, tokenKind::INCREMENTAL);
+                    break;
+                case tokenKind::SUB:
+                    setIfNext(tokenKind::SUB, tokenKind::DECREMENTAL);
+                    break;
+                case tokenKind::ASTERISK:
+                    setIfNext(tokenKind::SLASH, tokenKind::COMMENT_END);
+                    break;
+                case tokenKind::SLASH:
+                    setIfNext(tokenKind::ASTERISK, tokenKind::COMMENT_START);
+                    break;
+                case tokenKind::EQUAL:
+                    setIfNext(tokenKind::EQUAL, tokenKind::EQUIVALENCE);
+                    break;
+                case tokenKind::GRATER_THAN:
+                    setIfNext(tokenKind::EQUAL, tokenKind::GRATER);
+                    break;
+                case tokenKind::LESSER_THAN:
+                    setIfNext(tokenKind::EQUAL, tokenKind::LESSER);
+                    break;
+                case tokenKind::AMPERSAND:
+                    setIfNext(tokenKind::AMPERSAND, tokenKind::AND);
+                    break;
+                case tokenKind::PIPE:
+                    setIfNext(tokenKind::PIPE, tokenKind::OR);
                     break;
                 default:
                     putString(tokenKind::IDENTIFIER);
@@ -116,7 +176,7 @@ namespace Lexer
 
     void tokenize(const std::string& line, std::vector<Token>& tokens)
     {
-        singleCharTokenize(line, tokens);
-        multiCharTokenize(tokens);
+        lex(line, tokens);
+        // multiCharTokenize(tokens);
     }
 }
