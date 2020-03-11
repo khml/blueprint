@@ -3,16 +3,17 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "MacroLogger.hpp"
 #include "Parser.hpp"
 
 namespace AST
 {
-    Node::Node(std::string str) :str(str)
+    Node::Node(std::string str) :str(std::move(str))
     {}
 
-    Node::Node(std::string str, Node* left, Node* right) :str(str), left(left), right(right)
+    Node::Node(std::string str, Node* left, Node* right) :str(std::move(str)), left(left), right(right)
     {}
 
     Node::~Node()
