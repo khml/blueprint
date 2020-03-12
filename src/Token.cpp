@@ -34,30 +34,25 @@ namespace Lexer
 
         std::string ch;
         int idx = 0;
-        auto setIfNext = [&oss, &line, &idx, &ch, &kind, &putString]
-            (tokenKind::Kind expect, tokenKind::Kind&& replace) -> void
+        auto setIfNext = [&oss, &line, &idx, &ch, &kind, &putString]() -> void
         {
             putString(tokenKind::IDENTIFIER);
-            oss << ch;
 
             if (++idx >= line.size())
             {
-                --idx;
                 putString(kind);
                 return;
             }
 
-            ch = line.substr(idx, 1);
-            if (tokenKind::toTokenKind(ch) == expect)
-            {
-                oss << ch;
-                putString(replace);
-            }
-            else
-            {
-                --idx;
-                putString(kind);
-            }
+            ch = line.substr(--idx, 2);
+            kind = tokenKind::toTokenKind(ch);
+
+            if (kind == tokenKind::IDENTIFIER)
+                ch = line.substr(idx, 1);
+
+            oss << ch;
+            putString(kind);
+            idx++;
         };
 
         for (; idx < line.size(); idx++)
@@ -76,35 +71,17 @@ namespace Lexer
                     break;
                 case tokenKind::WHITESPACE:
                     putString(tokenKind::IDENTIFIER);
-                    oss << ch;
-                    putString(tokenKind::WHITESPACE);
                     break;
                 case tokenKind::ADD:
-                    setIfNext(tokenKind::ADD, tokenKind::INCREMENTAL);
-                    break;
                 case tokenKind::SUB:
-                    setIfNext(tokenKind::SUB, tokenKind::DECREMENTAL);
-                    break;
                 case tokenKind::ASTERISK:
-                    setIfNext(tokenKind::SLASH, tokenKind::COMMENT_END);
-                    break;
                 case tokenKind::SLASH:
-                    setIfNext(tokenKind::ASTERISK, tokenKind::COMMENT_START);
-                    break;
                 case tokenKind::EQUAL:
-                    setIfNext(tokenKind::EQUAL, tokenKind::EQUIVALENCE);
-                    break;
                 case tokenKind::GRATER_THAN:
-                    setIfNext(tokenKind::EQUAL, tokenKind::GRATER);
-                    break;
                 case tokenKind::LESSER_THAN:
-                    setIfNext(tokenKind::EQUAL, tokenKind::LESSER);
-                    break;
                 case tokenKind::AMPERSAND:
-                    setIfNext(tokenKind::AMPERSAND, tokenKind::AND);
-                    break;
                 case tokenKind::PIPE:
-                    setIfNext(tokenKind::PIPE, tokenKind::OR);
+                    setIfNext();
                     break;
                 default:
                     putString(tokenKind::IDENTIFIER);
