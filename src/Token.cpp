@@ -5,6 +5,7 @@
 #include "iostream"
 #include <sstream>
 
+#include "MacroLogger.hpp"
 #include "Token.hpp"
 
 namespace Lexer
@@ -40,25 +41,36 @@ namespace Lexer
 
             if (++idx >= line.size())
             {
+                // end of line
+                oss << ch;
                 putString(kind);
                 return;
             }
+            --idx;
 
-            ch = line.substr(--idx, 2);
+            auto origKind = kind;
+            ch = line.substr(idx, 2);
             kind = tokenKind::toTokenKind(ch);
 
             if (kind == tokenKind::IDENTIFIER)
+            {
+                // rollback
                 ch = line.substr(idx, 1);
+                kind = origKind;
+                --idx;
+            }
 
             oss << ch;
             putString(kind);
-            idx++;
+            ++idx;
         };
 
+        LOG2(line);
         for (; idx < line.size(); idx++)
         {
             ch = line.substr(idx, 1);
             kind = tokenKind::toTokenKind(ch);
+            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
             switch (kind)
             {
                 /*
@@ -89,6 +101,7 @@ namespace Lexer
                     putString(kind);
                     break;
             }
+            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
         putString(tokenKind::IDENTIFIER);
     }
