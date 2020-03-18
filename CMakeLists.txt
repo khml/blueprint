@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(BluePrint)
 
-execute_process(COMMAND cd codegen && python token_kind_generator.py)
+execute_process(COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/codegen/token_kind_generator.py)
 
 include_directories(headers)
 file(GLOB SOURCES src/*.cpp)
