@@ -47,6 +47,8 @@ TokenKind = OrderedDict([
     ("OR", "||"),
     ("COMMENT_START", "/*"),
     ("COMMENT_END", "*/"),
+    ("ARROW", "->"),
+    ("FAT_ARROW", "=>"),
 ])
 
 
