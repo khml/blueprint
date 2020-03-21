@@ -125,7 +125,15 @@ namespace AST
             auto varName = current().value;
             if (moveNext().kind == tokenKind::EQUAL)
             {
-                return new Node(current().value, new Node(varName), equality());
+                auto node = new Node(varName);
+#ifdef DEBUG_GRAPH
+                node->objId = objId++;
+#endif
+                node = new Node(current().value, node, equality());
+#ifdef DEBUG_GRAPH
+                node->objId = objId++;
+#endif
+                return node;
             }
             prev();
         }
@@ -145,6 +153,9 @@ namespace AST
             if (current().kind == tokenKind::AND || current().kind == tokenKind::OR)
             {
                 node = new Node(current().value, node, relation());
+#ifdef DEBUG_GRAPH
+                node->objId = objId++;
+#endif
             }
             else
                 break;
@@ -169,6 +180,9 @@ namespace AST
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
                     node = new Node(current().value, node, addition());
+#ifdef DEBUG_GRAPH
+                    node->objId = objId++;
+#endif
                     break;
                 default:
                     breakFlg = true;
