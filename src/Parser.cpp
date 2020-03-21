@@ -108,6 +108,82 @@ namespace AST
     Node* Parser::expression()
     {
         LOG2("expression");
+
+        auto node = assignment();
+        if (node != nullptr)
+            return node;
+
+        return equality();
+    }
+
+    Node* Parser::assignment()
+    {
+        LOG2("assignment");
+
+        if (moveNext().kind == tokenKind::IDENTIFIER && hasNext())
+        {
+            auto varName = current().value;
+            if (moveNext().kind == tokenKind::EQUAL)
+            {
+                return new Node(current().value, new Node(varName), equality());
+            }
+            prev();
+        }
+
+        prev();
+        return nullptr;
+    }
+
+    Node* Parser::equality()
+    {
+        LOG2("equality");
+
+        Node* node = relation();
+
+        while (hasNext())
+        {
+            if (current().kind == tokenKind::AND || current().kind == tokenKind::OR)
+            {
+                node = new Node(current().value, node, relation());
+            }
+            else
+                break;
+        }
+        return node;
+    }
+
+    Node* Parser::relation()
+    {
+        LOG2("relation");
+
+        Node* node = addition();
+
+        bool breakFlg = false;
+        while (hasNext())
+        {
+            switch (current().kind)
+            {
+                case tokenKind::GRATER_THAN:
+                case tokenKind::LESSER_THAN:
+                case tokenKind::EQUIVALENCE:
+                case tokenKind::GRATER:
+                case tokenKind::LESSER:
+                    node = new Node(current().value, node, addition());
+                    break;
+                default:
+                    breakFlg = true;
+                    break;
+            }
+            if (breakFlg)
+                break;
+        }
+        return node;
+    }
+
+    Node* Parser::addition()
+    {
+        LOG2("addition");
+
         Node* node = mul();
 
         while (hasNext())
@@ -155,7 +231,7 @@ namespace AST
         Node* node;
         if (current().kind == tokenKind::PARENTHESIS_LEFT)
         {
-            node = expression();
+            node = equality();
             if (hasNext() && current().kind != tokenKind::PARENTHESISE_RIGHT)
             {
                 std::cerr << "expected ')' but given token-kind=" <<
