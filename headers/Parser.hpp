@@ -71,6 +71,14 @@ namespace AST
 
         Node* expression();
 
+        Node* assignment();
+
+        Node* equality();
+
+        Node* relation();
+
+        Node* addition();
+
         Node* mul();
 
         Node* primary();
