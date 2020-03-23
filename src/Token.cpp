@@ -22,6 +22,8 @@ namespace Lexer
     {
         std::ostringstream oss;
         tokenKind::Kind kind;
+        std::string ch;
+        int idx = 0;
 
         tokens.emplace_back(Token(tokenKind::LINE_START, ""));
 
@@ -33,8 +35,6 @@ namespace Lexer
             oss.str("");
         };
 
-        std::string ch;
-        int idx = 0;
         auto setIfNext = [&oss, &line, &idx, &ch, &kind, &putString]() -> void
         {
             putString(tokenKind::IDENTIFIER);
