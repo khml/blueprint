@@ -22,10 +22,12 @@ namespace Lexer
     {
         std::ostringstream oss;
         tokenKind::Kind kind;
+        std::string ch;
+        int idx = 0;
 
         tokens.emplace_back(Token(tokenKind::LINE_START, ""));
 
-        auto putString = [&oss, &tokens](tokenKind::Kind kind) -> void
+        auto pushToken = [&oss, &tokens](tokenKind::Kind kind) -> void
         {
             if (oss.str().empty())
                 return;
@@ -33,17 +35,15 @@ namespace Lexer
             oss.str("");
         };
 
-        std::string ch;
-        int idx = 0;
-        auto setIfNext = [&oss, &line, &idx, &ch, &kind, &putString]() -> void
+        auto setIfNext = [&oss, &line, &idx, &ch, &kind, &pushToken]() -> void
         {
-            putString(tokenKind::IDENTIFIER);
+            pushToken(tokenKind::IDENTIFIER);
 
             if (++idx >= line.size())
             {
                 // end of line
                 oss << ch;
-                putString(kind);
+                pushToken(kind);
                 return;
             }
             --idx;
@@ -61,7 +61,7 @@ namespace Lexer
             }
 
             oss << ch;
-            putString(kind);
+            pushToken(kind);
             ++idx;
         };
 
@@ -82,7 +82,7 @@ namespace Lexer
                     oss << ch;
                     break;
                 case tokenKind::WHITESPACE:
-                    putString(tokenKind::IDENTIFIER);
+                    pushToken(tokenKind::IDENTIFIER);
                     break;
                 case tokenKind::ADD:
                 case tokenKind::SUB:
@@ -96,13 +96,13 @@ namespace Lexer
                     setIfNext();
                     break;
                 default:
-                    putString(tokenKind::IDENTIFIER);
+                    pushToken(tokenKind::IDENTIFIER);
                     oss << ch;
-                    putString(kind);
+                    pushToken(kind);
                     break;
             }
             LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        putString(tokenKind::IDENTIFIER);
+        pushToken(tokenKind::IDENTIFIER);
     }
 }
