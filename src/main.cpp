@@ -22,8 +22,8 @@ int main()
         if (line == "end")
             break;
 
-        std::vector<Lexer::Token> tokens;
-        Lexer::tokenize(line, tokens);
+        Lexer::Tokenizer tokenizer;
+        auto tokens = tokenizer.tokenize(line);
         Lexer::printTokens(tokens);
 
         auto parser = AST::Parser();
