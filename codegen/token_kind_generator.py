@@ -37,7 +37,6 @@ TokenKind = OrderedDict([
     ('BACKSLASH', '\\\\'),
     ('WHITESPACE', ' '),
     ('NEW_LINE', '\\n'),
-    ('IDENTIFIER', ''),
     ("EQUIVALENCE", "=="),
     ("GRATER", ">="),
     ("LESSER", "<="),
@@ -49,7 +48,11 @@ TokenKind = OrderedDict([
     ("COMMENT_END", "*/"),
     ("ARROW", "->"),
     ("FAT_ARROW", "=>"),
+    ('IDENTIFIER', ''),
+    ('STRING', ''),
 ])
+
+SPECIAL_TYPES = ["IDENTIFIER", "STRING"]
 
 
 class Header:
@@ -177,7 +180,9 @@ namespace {namespace}
         map_impl = ""
         item_format = "            {{\"{string}\", {kind}}},\n"
         for kind_name, kind_value in TokenKind.items():
-            map_impl += item_format.format(string=kind_value, kind=kind_name) if kind_name != "IDENTIFIER" else ""
+            if kind_name in SPECIAL_TYPES:
+                continue
+            map_impl += item_format.format(string=kind_value, kind=kind_name)
         return self.MAP_FORMAT.format(impl=map_impl)
 
 
