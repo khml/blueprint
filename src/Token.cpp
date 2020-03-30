@@ -61,9 +61,9 @@ namespace Lexer
         indicator = 0;
 
         LOG2(line);
-        for (; indicator < line.size(); indicator++)
+        for (; indicator < lineData.size(); indicator++)
         {
-            ch = line.substr(indicator, 1);
+            ch = lineData.substr(indicator, 1);
             kind = tokenKind::toTokenKind(ch);
             LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
             switch (kind)
