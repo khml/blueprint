@@ -48,6 +48,8 @@ namespace Lexer
         void pushToken(tokenKind::Kind tokenKind);
 
         void pushTwoCharToken();
+
+        void pushString();
     };
 
     void printTokens(std::vector<Token>& tokens);

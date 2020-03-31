@@ -53,6 +53,22 @@ namespace Lexer
         ++indicator;
     }
 
+    void Tokenizer::pushString()
+    {
+        int start = indicator++;
+        for (; indicator < lineData.size(); indicator++)
+        {
+            if (lineData.substr(indicator, 1) == ch)
+            {
+                oss << lineData.substr(start + 1, (indicator - start - 1));
+                pushToken(tokenKind::IDENTIFIER);
+                return;
+            }
+        }
+        std::cerr << "expected : " << ch << " but not given." << std::endl;
+        exit(1);
+    }
+
     std::vector<Token> Tokenizer::tokenize(std::string& line)
     {
         lineData = line;
@@ -61,11 +77,11 @@ namespace Lexer
         indicator = 0;
 
         LOG2(line);
-        for (; indicator < line.size(); indicator++)
+        for (; indicator < lineData.size(); indicator++)
         {
-            ch = line.substr(indicator, 1);
+            ch = lineData.substr(indicator, 1);
             kind = tokenKind::toTokenKind(ch);
-            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
+            LOG2("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
             switch (kind)
             {
                 /*
@@ -90,13 +106,17 @@ namespace Lexer
                 case tokenKind::PIPE:
                     pushTwoCharToken();
                     break;
+                case tokenKind::APOSTROPHE:
+                case tokenKind::QUOTATION:
+                    pushString();
+                    break;
                 default:
                     pushToken(tokenKind::IDENTIFIER);
                     oss << ch;
                     pushToken(kind);
                     break;
             }
-            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
+            LOG2("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
         pushToken(tokenKind::IDENTIFIER);
         return tokens;
