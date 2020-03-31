@@ -48,11 +48,11 @@ namespace Lexer
         void pushToken(tokenKind::Kind tokenKind);
 
         void pushTwoCharToken();
+
+        void pushString();
     };
 
     void printTokens(std::vector<Token>& tokens);
-
-    void tokenize(const std::string& line, std::vector<Token>& tokens);
 }
 
 #endif //BLUEPRINT_TOKEN_HPP
