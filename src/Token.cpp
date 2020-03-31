@@ -53,6 +53,22 @@ namespace Lexer
         ++indicator;
     }
 
+    void Tokenizer::pushString()
+    {
+        int start = indicator++;
+        for (; indicator < lineData.size(); indicator++)
+        {
+            if (lineData.substr(indicator, 1) == ch)
+            {
+                oss << lineData.substr(start + 1, (indicator - start - 1));
+                pushToken(tokenKind::IDENTIFIER);
+                return;
+            }
+        }
+        std::cerr << "expected : " << ch << " but not given." << std::endl;
+        exit(1);
+    }
+
     std::vector<Token> Tokenizer::tokenize(std::string& line)
     {
         lineData = line;
@@ -89,6 +105,10 @@ namespace Lexer
                 case tokenKind::AMPERSAND:
                 case tokenKind::PIPE:
                     pushTwoCharToken();
+                    break;
+                case tokenKind::APOSTROPHE:
+                case tokenKind::QUOTATION:
+                    pushString();
                     break;
                 default:
                     pushToken(tokenKind::IDENTIFIER);
