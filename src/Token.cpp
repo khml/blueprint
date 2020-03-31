@@ -65,7 +65,7 @@ namespace Lexer
         {
             ch = lineData.substr(indicator, 1);
             kind = tokenKind::toTokenKind(ch);
-            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
+            LOG2("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
             switch (kind)
             {
                 /*
@@ -96,7 +96,7 @@ namespace Lexer
                     pushToken(kind);
                     break;
             }
-            LOG2("idx: " << idx << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
+            LOG2("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
         pushToken(tokenKind::IDENTIFIER);
         return tokens;
