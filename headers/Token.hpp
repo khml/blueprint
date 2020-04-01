@@ -10,22 +10,28 @@
 #include <vector>
 
 #include "TokenKind.hpp"
+#include "TokenType.hpp"
 
 namespace Lexer
 {
     class Token
     {
     public:
-        Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value)
-        {};
+        Token(tokenKind::Kind kind, std::string&& value);
 
-        virtual ~Token()
-        {};
+        Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type);
+
+        virtual ~Token();
+
         const tokenKind::Kind kind;
+        const tokenType::Type type;
         const std::string value;
 
-        std::string token()
-        { return fromTokenKind(kind); };
+        std::string tokenStr()
+        { return tokenKind::fromTokenKind(kind); };
+
+        std::string typeStr()
+        { return tokenType::fromTokenType(type); };
     };
 
     class Tokenizer
@@ -46,6 +52,8 @@ namespace Lexer
         int indicator = 0;
 
         void pushToken(tokenKind::Kind tokenKind);
+
+        void pushToken(tokenKind::Kind tokenKind, tokenType::Type type);
 
         void pushTwoCharToken();
 

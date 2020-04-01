@@ -9,6 +9,15 @@
 
 namespace Lexer
 {
+    Token::Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value), type(tokenType::toType(value))
+    {}
+
+    Token::Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type) :kind(kind), value(value), type(type)
+    {}
+
+    Token::~Token()
+    = default;
+
     Tokenizer::Tokenizer() :kind(tokenKind::IDENTIFIER)
     {}
 
@@ -20,6 +29,14 @@ namespace Lexer
         if (oss.str().empty())
             return;
         tokens.emplace_back(Token(tokenKind, oss.str()));
+        oss.str("");
+    }
+
+    void Tokenizer::pushToken(tokenKind::Kind tokenKind, tokenType::Type type)
+    {
+        if (oss.str().empty())
+            return;
+        tokens.emplace_back(Token(tokenKind, oss.str(), type));
         oss.str("");
     }
 
@@ -61,7 +78,7 @@ namespace Lexer
             if (lineData.substr(indicator, 1) == ch)
             {
                 oss << lineData.substr(start + 1, (indicator - start - 1));
-                pushToken(tokenKind::IDENTIFIER);
+                pushToken(tokenKind::IDENTIFIER, tokenType::STRING);
                 return;
             }
         }
@@ -126,7 +143,7 @@ namespace Lexer
     {
         for (auto token : tokens)
         {
-            std::cerr << token.value << " | " << token.token() << std::endl;
+            std::cerr << token.value << " | " << token.tokenStr() << " | " << token.typeStr() << std::endl;
         }
     }
 }
