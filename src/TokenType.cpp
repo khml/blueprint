@@ -2,7 +2,6 @@
 // Created by KHML on 2020/01/29.
 //
 
-#include <iostream>
 #include <regex>
 
 #include "TokenType.hpp"
