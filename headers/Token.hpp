@@ -27,11 +27,7 @@ namespace Lexer
         const tokenType::Type type;
         const std::string value;
 
-        std::string tokenStr()
-        { return tokenKind::fromTokenKind(kind); };
-
-        std::string typeStr()
-        { return tokenType::fromTokenType(type); };
+        void print();
     };
 
     class Tokenizer

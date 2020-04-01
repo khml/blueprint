@@ -18,6 +18,12 @@ namespace Lexer
     Token::~Token()
     = default;
 
+    void Token::print()
+    {
+        std::cerr << value << " | " << tokenKind::fromTokenKind(kind)
+                  << " | " << tokenType::fromTokenType(type) << std::endl;
+    }
+
     Tokenizer::Tokenizer() :kind(tokenKind::IDENTIFIER)
     {}
 
@@ -142,8 +148,6 @@ namespace Lexer
     void printTokens(std::vector<Token>& tokens)
     {
         for (auto token : tokens)
-        {
-            std::cerr << token.value << " | " << token.tokenStr() << " | " << token.typeStr() << std::endl;
-        }
+            token.print();
     }
 }
