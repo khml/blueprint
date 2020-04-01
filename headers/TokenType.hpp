@@ -16,6 +16,7 @@ namespace tokenType
     DOUBLE,
     STRING,
     IDENTIFIER,
+    RESERVED,
     UNTOKENIZE,
     };
 

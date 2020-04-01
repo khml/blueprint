@@ -6,10 +6,12 @@
 #include <regex>
 
 #include "TokenType.hpp"
+#include "TokenKind.hpp"
 
 using std::string;
 using std::regex;
 using std::regex_match;
+using tokenKind::toTokenKind;
 
 namespace tokenType
 {
@@ -27,6 +29,8 @@ namespace tokenType
                 return "STRING";
             case UNTOKENIZE:
                 return "UNTOKENIZE";
+            case RESERVED:
+                return "RESERVED";
             case IDENTIFIER:
             default:
                 return "IDENTIFIER";
@@ -68,6 +72,12 @@ namespace tokenType
         else if (isDouble(str))
             return DOUBLE;
         else
-            return UNTOKENIZE;
+        {
+            auto kind = toTokenKind(str);
+            if (kind == tokenKind::IDENTIFIER)
+                return UNTOKENIZE;
+            else
+                return RESERVED;
+        }
     }
 }
