@@ -26,10 +26,8 @@ namespace tokenType
                 return "DOUBLE";
             case STRING:
                 return "STRING";
-            case UNTOKENIZE:
-                return "UNTOKENIZE";
-            case RESERVED:
-                return "RESERVED";
+            case OPERATOR:
+                return "OPERATOR";
             case IDENTIFIER:
             default:
                 return "IDENTIFIER";
@@ -74,9 +72,9 @@ namespace tokenType
         {
             auto kind = toTokenKind(str);
             if (kind == tokenKind::IDENTIFIER)
-                return UNTOKENIZE;
+                return IDENTIFIER;
             else
-                return RESERVED;
+                return OPERATOR;
         }
     }
 }

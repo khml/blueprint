@@ -16,8 +16,7 @@ namespace tokenType
     DOUBLE,
     STRING,
     IDENTIFIER,
-    RESERVED,
-    UNTOKENIZE,
+    OPERATOR,
     };
 
     bool isDigit(std::string& str);
