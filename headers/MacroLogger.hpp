@@ -43,10 +43,4 @@
 #define LOG_ERROR(value)
 #endif
 
-#ifdef DEBUG2
-#define LOG2(value) std::cerr << value << std::endl
-#else
-#define LOG2(value)
-#endif
-
 #endif //BLUEPRINT_MACROLOGGER_HPP

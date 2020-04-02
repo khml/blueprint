@@ -107,7 +107,7 @@ namespace AST
 
     Node* Parser::expression()
     {
-        LOG2("expression");
+        LOG_DEBUG("expression");
 
         auto node = assignment();
         if (node != nullptr)
@@ -118,7 +118,7 @@ namespace AST
 
     Node* Parser::assignment()
     {
-        LOG2("assignment");
+        LOG_DEBUG("assignment");
 
         if (moveNext().kind == tokenKind::IDENTIFIER && hasNext())
         {
@@ -144,7 +144,7 @@ namespace AST
 
     Node* Parser::equality()
     {
-        LOG2("equality");
+        LOG_DEBUG("equality");
 
         Node* node = relation();
 
@@ -165,7 +165,7 @@ namespace AST
 
     Node* Parser::relation()
     {
-        LOG2("relation");
+        LOG_DEBUG("relation");
 
         Node* node = addition();
 
@@ -196,7 +196,7 @@ namespace AST
 
     Node* Parser::addition()
     {
-        LOG2("addition");
+        LOG_DEBUG("addition");
 
         Node* node = mul();
 
@@ -217,7 +217,7 @@ namespace AST
 
     Node* Parser::mul()
     {
-        LOG2("mul");
+        LOG_DEBUG("mul");
 
         Node* node = primary();
         while (hasNext())
@@ -238,7 +238,7 @@ namespace AST
 
     Node* Parser::primary()
     {
-        LOG2("primary");
+        LOG_DEBUG("primary");
 
         moveNext();
 
