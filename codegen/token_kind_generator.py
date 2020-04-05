@@ -62,6 +62,16 @@ TokenKind = OrderedDict([
     ("DOUBLE", 'double'),
     ("BOOL", 'bool'),
     ("VOID", 'void'),
+
+    # control syntax
+    ("RETURN", 'return'),
+    ("IF", 'if'),
+    ("ELSE", 'else'),
+    ("ELIF", 'elif'),
+    ("FOR", 'for'),
+    ("WHILE", 'while'),
+    ("SWITCH", 'switch'),
+    ("CASE", 'case'),
 ])
 
 SPECIAL_TYPES = ["IDENTIFIER"]
