@@ -54,9 +54,17 @@ TokenKind = OrderedDict([
     ("CLASS", 'class'),
     ("STRUCT", 'struct'),
     ("CLASS", 'class'),
+
+    # primitive types
+    ('STRING', 'string'),
+    ("INT", 'int'),
+    ("FLOAT", 'float'),
+    ("DOUBLE", 'double'),
+    ("BOOL", 'bool'),
+    ("VOID", 'void'),
 ])
 
-SPECIAL_TYPES = ["IDENTIFIER", "STRING"]
+SPECIAL_TYPES = ["IDENTIFIER"]
 
 
 class Header:
