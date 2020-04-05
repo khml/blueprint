@@ -34,10 +34,16 @@ namespace Lexer
     {
         if (oss.str().empty())
             return;
+
         if (isString)
             tokens.emplace_back(Token(kindVal, oss.str(), tokenType::STRING));
         else
+        {
+            if (kindVal == tokenKind::IDENTIFIER) // keyword
+                kindVal = tokenKind::toTokenKind(oss.str());
+
             tokens.emplace_back(Token(kindVal, oss.str()));
+        }
         oss.str("");
     }
 

@@ -49,7 +49,11 @@ TokenKind = OrderedDict([
     ("ARROW", "->"),
     ("FAT_ARROW", "=>"),
     ('IDENTIFIER', ''),
-    ('STRING', ''),
+
+    # keywords
+    ("CLASS", 'class'),
+    ("STRUCT", 'struct'),
+    ("CLASS", 'class'),
 ])
 
 SPECIAL_TYPES = ["IDENTIFIER", "STRING"]
@@ -67,6 +71,8 @@ namespace {namespace}
 {{
 {content}
     Kind toTokenKind(std::string& val);
+    
+    Kind toTokenKind(std::string&& val);
     
     std::string fromTokenKind(Kind val);
 }}
@@ -112,6 +118,10 @@ class Impl:
 namespace {namespace}
 {{
 {content}\
+    Kind toTokenKind(std::string&& val)
+    {{
+        return toTokenKind(val);
+    }}
 }}
 """
 
