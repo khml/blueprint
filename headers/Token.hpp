@@ -47,9 +47,7 @@ namespace Lexer
         std::string ch;
         int indicator = 0;
 
-        void pushToken(tokenKind::Kind tokenKind);
-
-        void pushToken(tokenKind::Kind tokenKind, tokenType::Type type);
+        void pushToken(tokenKind::Kind kindVal, bool isString = false);
 
         void pushTwoCharToken();
 

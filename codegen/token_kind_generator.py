@@ -49,10 +49,32 @@ TokenKind = OrderedDict([
     ("ARROW", "->"),
     ("FAT_ARROW", "=>"),
     ('IDENTIFIER', ''),
-    ('STRING', ''),
+
+    # keywords
+    ("CLASS", 'class'),
+    ("STRUCT", 'struct'),
+    ("CLASS", 'class'),
+
+    # primitive types
+    ('STRING', 'string'),
+    ("INT", 'int'),
+    ("FLOAT", 'float'),
+    ("DOUBLE", 'double'),
+    ("BOOL", 'bool'),
+    ("VOID", 'void'),
+
+    # control syntax
+    ("RETURN", 'return'),
+    ("IF", 'if'),
+    ("ELSE", 'else'),
+    ("ELIF", 'elif'),
+    ("FOR", 'for'),
+    ("WHILE", 'while'),
+    ("SWITCH", 'switch'),
+    ("CASE", 'case'),
 ])
 
-SPECIAL_TYPES = ["IDENTIFIER", "STRING"]
+SPECIAL_TYPES = ["IDENTIFIER"]
 
 
 class Header:
@@ -67,6 +89,8 @@ namespace {namespace}
 {{
 {content}
     Kind toTokenKind(std::string& val);
+    
+    Kind toTokenKind(std::string&& val);
     
     std::string fromTokenKind(Kind val);
 }}
@@ -112,6 +136,10 @@ class Impl:
 namespace {namespace}
 {{
 {content}\
+    Kind toTokenKind(std::string&& val)
+    {{
+        return toTokenKind(val);
+    }}
 }}
 """
 
