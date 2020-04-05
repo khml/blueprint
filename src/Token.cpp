@@ -30,19 +30,14 @@ namespace Lexer
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(tokenKind::Kind tokenKind)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, bool isString)
     {
         if (oss.str().empty())
             return;
-        tokens.emplace_back(Token(tokenKind, oss.str()));
-        oss.str("");
-    }
-
-    void Tokenizer::pushToken(tokenKind::Kind tokenKind, tokenType::Type type)
-    {
-        if (oss.str().empty())
-            return;
-        tokens.emplace_back(Token(tokenKind, oss.str(), type));
+        if (isString)
+            tokens.emplace_back(Token(kindVal, oss.str(), tokenType::STRING));
+        else
+            tokens.emplace_back(Token(kindVal, oss.str()));
         oss.str("");
     }
 
