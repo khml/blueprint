@@ -51,7 +51,7 @@ namespace Lexer
 
         void pushTwoCharToken();
 
-        void pushString();
+        void readString();
     };
 
     void printTokens(std::vector<Token>& tokens);
