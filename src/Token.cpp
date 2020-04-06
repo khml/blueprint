@@ -77,7 +77,7 @@ namespace Lexer
         ++indicator;
     }
 
-    void Tokenizer::pushString()
+    void Tokenizer::readString()
     {
         int start = indicator++;
         for (; indicator < lineData.size(); indicator++)
@@ -132,7 +132,7 @@ namespace Lexer
                     break;
                 case tokenKind::APOSTROPHE:
                 case tokenKind::QUOTATION:
-                    pushString();
+                    readString();
                     break;
                 default:
                     pushToken(tokenKind::IDENTIFIER);
