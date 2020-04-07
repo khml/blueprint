@@ -89,15 +89,32 @@ namespace Lexer
         exit(1);
     }
 
-    std::vector<Token> Tokenizer::tokenize(std::string& line)
+    void Tokenizer::readIdentifier()
+    {
+        for(; indicator < lineData.size(); indicator++)
+        {
+            ch = lineData.substr(indicator, 1);
+            kind = tokenKind::toTokenKind(ch);
+            if (kind == tokenKind::IDENTIFIER)
+                oss << ch;
+            else
+            {
+                pushToken(tokenKind::IDENTIFIER);
+                --indicator;
+                return;
+            }
+        }
+        pushToken(tokenKind::IDENTIFIER);
+    }
+
+    std::vector<Token> Tokenizer::tokenize(const std::string& line)
     {
         lineData = line;
         tokens.clear();
         oss.str("");
-        indicator = 0;
 
         LOG_DEBUG(line);
-        for (; indicator < lineData.size(); indicator++)
+        for (indicator = 0; indicator < lineData.size(); indicator++)
         {
             ch = lineData.substr(indicator, 1);
             kind = tokenKind::toTokenKind(ch);
@@ -110,10 +127,9 @@ namespace Lexer
                  * else, tokenize stored strings, and put the token.
                  */
                 case tokenKind::IDENTIFIER:
-                    oss << ch;
+                    readIdentifier();
                     break;
                 case tokenKind::WHITESPACE:
-                    pushToken(tokenKind::IDENTIFIER);
                     break;
                 case tokenKind::ADD:
                 case tokenKind::SUB:
@@ -132,7 +148,6 @@ namespace Lexer
                     readString();
                     break;
                 default:
-                    pushToken(tokenKind::IDENTIFIER);
                     oss << ch;
                     pushToken(kind);
                     break;
