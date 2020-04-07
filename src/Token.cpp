@@ -100,8 +100,8 @@ namespace Lexer
         {
             if (lineData.substr(indicator, 1) == ch)
             {
-                oss << lineData.substr(start + 1, (indicator - start - 1));
-                pushToken(tokenKind::IDENTIFIER, tokenType::STRING);
+                auto str = lineData.substr(start + 1, (indicator - start - 1));
+                pushToken(tokenKind::IDENTIFIER, str, true);
                 return;
             }
         }
