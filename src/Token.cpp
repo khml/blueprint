@@ -47,21 +47,18 @@ namespace Lexer
         oss.str("");
     }
 
-    void Tokenizer::pushTwoCharToken()
+    void Tokenizer::readMultiCharOperator(int size)
     {
-        pushToken(tokenKind::IDENTIFIER);
-
-        if (++indicator >= lineData.size())
+        if (indicator + size - 1 >= lineData.size())
         {
             // end of line
             oss << ch;
             pushToken(kind);
             return;
         }
-        --indicator;
 
         auto origKind = kind;
-        ch = lineData.substr(indicator, 2);
+        ch = lineData.substr(indicator, size);
         kind = tokenKind::toTokenKind(ch);
 
         if (kind == tokenKind::IDENTIFIER)
@@ -69,7 +66,6 @@ namespace Lexer
             // rollback
             ch = lineData.substr(indicator, 1);
             kind = origKind;
-            --indicator;
         }
 
         oss << ch;
@@ -128,7 +124,8 @@ namespace Lexer
                 case tokenKind::LESSER_THAN:
                 case tokenKind::AMPERSAND:
                 case tokenKind::PIPE:
-                    pushTwoCharToken();
+                    pushToken(tokenKind::IDENTIFIER);
+                    readMultiCharOperator(2);
                     break;
                 case tokenKind::APOSTROPHE:
                 case tokenKind::QUOTATION:
