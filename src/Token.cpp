@@ -66,13 +66,12 @@ namespace Lexer
         }
     }
 
-    void Tokenizer::readMultiCharOperator(int size)
+    void Tokenizer::readMultiCharOperator(const int size)
     {
         if (indicator + size - 1 >= lineData.size())
         {
             // end of line
-            oss << ch;
-            pushToken(kind);
+            pushToken(kind, ch);
             return;
         }
 
@@ -89,8 +88,7 @@ namespace Lexer
         else
             indicator++;
 
-        oss << ch;
-        pushToken(kind);
+        pushToken(kind, ch);
     }
 
     void Tokenizer::readString()
