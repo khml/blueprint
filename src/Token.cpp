@@ -9,7 +9,13 @@
 
 namespace Lexer
 {
+    Token::Token(tokenKind::Kind kind, std::string& value) :kind(kind), value(value), type(tokenType::toType(value))
+    {}
+
     Token::Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value), type(tokenType::toType(value))
+    {}
+
+    Token::Token(tokenKind::Kind kind, std::string& value, tokenType::Type type) :kind(kind), value(value), type(type)
     {}
 
     Token::Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type) :kind(kind), value(value), type(type)
@@ -30,7 +36,7 @@ namespace Lexer
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(tokenKind::Kind kindVal, bool isString)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, const bool isString)
     {
         if (oss.str().empty())
             return;
@@ -45,6 +51,19 @@ namespace Lexer
             tokens.emplace_back(Token(kindVal, oss.str()));
         }
         oss.str("");
+    }
+
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, std::string& value, bool isString)
+    {
+        if (isString)
+            tokens.emplace_back(Token(kindVal, value, tokenType::STRING));
+        else
+        {
+            if (kindVal == tokenKind::IDENTIFIER)
+                kindVal = tokenKind::toTokenKind(value); // check keyword or not
+
+            tokens.emplace_back(Token(kindVal, value));
+        }
     }
 
     void Tokenizer::readMultiCharOperator(int size)
@@ -92,7 +111,7 @@ namespace Lexer
 
     void Tokenizer::readIdentifier()
     {
-        for(; indicator < lineData.size(); indicator++)
+        for (; indicator < lineData.size(); indicator++)
         {
             ch = lineData.substr(indicator, 1);
             kind = tokenKind::toTokenKind(ch);
@@ -141,7 +160,6 @@ namespace Lexer
                 case tokenKind::LESSER_THAN:
                 case tokenKind::AMPERSAND:
                 case tokenKind::PIPE:
-                    pushToken(tokenKind::IDENTIFIER);
                     readMultiCharOperator(2);
                     break;
                 case tokenKind::APOSTROPHE:
@@ -149,13 +167,11 @@ namespace Lexer
                     readString();
                     break;
                 default:
-                    oss << ch;
-                    pushToken(kind);
+                    pushToken(kind, ch);
                     break;
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        pushToken(tokenKind::IDENTIFIER);
         return tokens;
     }
 
