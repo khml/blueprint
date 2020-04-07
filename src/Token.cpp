@@ -67,10 +67,11 @@ namespace Lexer
             ch = lineData.substr(indicator, 1);
             kind = origKind;
         }
+        else
+            indicator++;
 
         oss << ch;
         pushToken(kind);
-        ++indicator;
     }
 
     void Tokenizer::readString()
