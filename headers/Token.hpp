@@ -37,7 +37,7 @@ namespace Lexer
 
         virtual ~Tokenizer();
 
-        std::vector<Token> tokenize(std::string& line);
+        std::vector<Token> tokenize(const std::string& line);
 
     protected:
         std::string lineData;
@@ -52,6 +52,8 @@ namespace Lexer
         void readMultiCharOperator(int size);
 
         void readString();
+
+        void readIdentifier();
     };
 
     void printTokens(std::vector<Token>& tokens);
