@@ -17,7 +17,11 @@ namespace Lexer
     class Token
     {
     public:
+        Token(tokenKind::Kind kind, std::string& value);
+
         Token(tokenKind::Kind kind, std::string&& value);
+
+        Token(tokenKind::Kind kind, std::string& value, tokenType::Type type);
 
         Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type);
 
@@ -37,7 +41,7 @@ namespace Lexer
 
         virtual ~Tokenizer();
 
-        std::vector<Token> tokenize(std::string& line);
+        std::vector<Token> tokenize(const std::string& line);
 
     protected:
         std::string lineData;
@@ -49,9 +53,13 @@ namespace Lexer
 
         void pushToken(tokenKind::Kind kindVal, bool isString = false);
 
-        void pushTwoCharToken();
+        void pushToken(tokenKind::Kind kindVal, std::string& value, bool isString = false);
 
-        void pushString();
+        void readMultiCharOperator(int size);
+
+        void readString();
+
+        void readIdentifier();
     };
 
     void printTokens(std::vector<Token>& tokens);
