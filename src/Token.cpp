@@ -111,20 +111,19 @@ namespace Lexer
 
     void Tokenizer::readIdentifier()
     {
+        int start = indicator++;
         for (; indicator < lineData.size(); indicator++)
         {
-            ch = lineData.substr(indicator, 1);
-            kind = tokenKind::toTokenKind(ch);
-            if (kind == tokenKind::IDENTIFIER)
-                oss << ch;
-            else
+            kind = tokenKind::toTokenKind(lineData.substr(indicator, 1));
+            if (kind != tokenKind::IDENTIFIER)
             {
-                pushToken(tokenKind::IDENTIFIER);
                 --indicator;
-                return;
+                break;
             }
         }
-        pushToken(tokenKind::IDENTIFIER);
+
+        auto identifier = lineData.substr(start, (indicator - start + 1));
+        pushToken(tokenKind::IDENTIFIER, identifier);
     }
 
     std::vector<Token> Tokenizer::tokenize(const std::string& line)
