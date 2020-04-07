@@ -49,7 +49,7 @@ namespace Lexer
 
         void pushToken(tokenKind::Kind kindVal, bool isString = false);
 
-        void pushTwoCharToken();
+        void readMultiCharOperator(int size);
 
         void readString();
     };
