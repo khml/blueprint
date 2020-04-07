@@ -17,7 +17,11 @@ namespace Lexer
     class Token
     {
     public:
+        Token(tokenKind::Kind kind, std::string& value);
+
         Token(tokenKind::Kind kind, std::string&& value);
+
+        Token(tokenKind::Kind kind, std::string& value, tokenType::Type type);
 
         Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type);
 
@@ -48,6 +52,8 @@ namespace Lexer
         int indicator = 0;
 
         void pushToken(tokenKind::Kind kindVal, bool isString = false);
+
+        void pushToken(tokenKind::Kind kindVal, std::string& value, bool isString = false);
 
         void readMultiCharOperator(int size);
 

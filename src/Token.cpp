@@ -9,7 +9,13 @@
 
 namespace Lexer
 {
+    Token::Token(tokenKind::Kind kind, std::string& value) :kind(kind), value(value), type(tokenType::toType(value))
+    {}
+
     Token::Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value), type(tokenType::toType(value))
+    {}
+
+    Token::Token(tokenKind::Kind kind, std::string& value, tokenType::Type type) :kind(kind), value(value), type(type)
     {}
 
     Token::Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type) :kind(kind), value(value), type(type)
@@ -30,7 +36,7 @@ namespace Lexer
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(tokenKind::Kind kindVal, bool isString)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, const bool isString)
     {
         if (oss.str().empty())
             return;
@@ -47,13 +53,25 @@ namespace Lexer
         oss.str("");
     }
 
-    void Tokenizer::readMultiCharOperator(int size)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, std::string& value, bool isString)
+    {
+        if (isString)
+            tokens.emplace_back(Token(kindVal, value, tokenType::STRING));
+        else
+        {
+            if (kindVal == tokenKind::IDENTIFIER)
+                kindVal = tokenKind::toTokenKind(value); // check keyword or not
+
+            tokens.emplace_back(Token(kindVal, value));
+        }
+    }
+
+    void Tokenizer::readMultiCharOperator(const int size)
     {
         if (indicator + size - 1 >= lineData.size())
         {
             // end of line
-            oss << ch;
-            pushToken(kind);
+            pushToken(kind, ch);
             return;
         }
 
@@ -67,10 +85,10 @@ namespace Lexer
             ch = lineData.substr(indicator, 1);
             kind = origKind;
         }
+        else
+            indicator++;
 
-        oss << ch;
-        pushToken(kind);
-        ++indicator;
+        pushToken(kind, ch);
     }
 
     void Tokenizer::readString()
@@ -80,8 +98,8 @@ namespace Lexer
         {
             if (lineData.substr(indicator, 1) == ch)
             {
-                oss << lineData.substr(start + 1, (indicator - start - 1));
-                pushToken(tokenKind::IDENTIFIER, tokenType::STRING);
+                auto str = lineData.substr(start + 1, (indicator - start - 1));
+                pushToken(tokenKind::IDENTIFIER, str, true);
                 return;
             }
         }
@@ -91,20 +109,19 @@ namespace Lexer
 
     void Tokenizer::readIdentifier()
     {
-        for(; indicator < lineData.size(); indicator++)
+        int start = indicator++;
+        for (; indicator < lineData.size(); indicator++)
         {
-            ch = lineData.substr(indicator, 1);
-            kind = tokenKind::toTokenKind(ch);
-            if (kind == tokenKind::IDENTIFIER)
-                oss << ch;
-            else
+            kind = tokenKind::toTokenKind(lineData.substr(indicator, 1));
+            if (kind != tokenKind::IDENTIFIER)
             {
-                pushToken(tokenKind::IDENTIFIER);
                 --indicator;
-                return;
+                break;
             }
         }
-        pushToken(tokenKind::IDENTIFIER);
+
+        auto identifier = lineData.substr(start, (indicator - start + 1));
+        pushToken(tokenKind::IDENTIFIER, identifier);
     }
 
     std::vector<Token> Tokenizer::tokenize(const std::string& line)
@@ -140,7 +157,6 @@ namespace Lexer
                 case tokenKind::LESSER_THAN:
                 case tokenKind::AMPERSAND:
                 case tokenKind::PIPE:
-                    pushToken(tokenKind::IDENTIFIER);
                     readMultiCharOperator(2);
                     break;
                 case tokenKind::APOSTROPHE:
@@ -148,13 +164,11 @@ namespace Lexer
                     readString();
                     break;
                 default:
-                    oss << ch;
-                    pushToken(kind);
+                    pushToken(kind, ch);
                     break;
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << tokenKind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        pushToken(tokenKind::IDENTIFIER);
         return tokens;
     }
 
