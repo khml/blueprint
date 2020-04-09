@@ -3,22 +3,19 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "MacroLogger.hpp"
 #include "Token.hpp"
 
 namespace Lexer
 {
-    Token::Token(tokenKind::Kind kind, std::string& value) :kind(kind), value(value), type(tokenType::toType(value))
+    Token::Token(tokenKind::Kind kind, const std::string& value) :kind(kind), value(value),
+        type(tokenType::toType(value))
     {}
 
-    Token::Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value), type(tokenType::toType(value))
-    {}
-
-    Token::Token(tokenKind::Kind kind, std::string& value, tokenType::Type type) :kind(kind), value(value), type(type)
-    {}
-
-    Token::Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type) :kind(kind), value(value), type(type)
+    Token::Token(tokenKind::Kind kind, std::string value, tokenType::Type type) :kind(kind), value(std::move(value)),
+        type(type)
     {}
 
     Token::~Token()
@@ -30,30 +27,13 @@ namespace Lexer
                   << " | " << tokenType::fromTokenType(type) << std::endl;
     }
 
-    Tokenizer::Tokenizer() :kind(tokenKind::IDENTIFIER)
-    {}
+    Tokenizer::Tokenizer()
+    = default;
 
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(tokenKind::Kind kindVal, const bool isString)
-    {
-        if (oss.str().empty())
-            return;
-
-        if (isString)
-            tokens.emplace_back(Token(kindVal, oss.str(), tokenType::STRING));
-        else
-        {
-            if (kindVal == tokenKind::IDENTIFIER) // keyword
-                kindVal = tokenKind::toTokenKind(oss.str());
-
-            tokens.emplace_back(Token(kindVal, oss.str()));
-        }
-        oss.str("");
-    }
-
-    void Tokenizer::pushToken(tokenKind::Kind kindVal, std::string& value, bool isString)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, const std::string& value, bool isString)
     {
         if (isString)
             tokens.emplace_back(Token(kindVal, value, tokenType::STRING));
@@ -66,7 +46,7 @@ namespace Lexer
         }
     }
 
-    void Tokenizer::readMultiCharOperator(const int size)
+    void Tokenizer::readMultiCharOperator(tokenKind::Kind kind, const std::string& ch, const int size)
     {
         if (indicator + size - 1 >= lineData.size())
         {
@@ -75,41 +55,42 @@ namespace Lexer
             return;
         }
 
-        auto origKind = kind;
-        ch = lineData.substr(indicator, size);
-        kind = tokenKind::toTokenKind(ch);
+        auto multiCharOp = lineData.substr(indicator, size);
+        auto kindVal = tokenKind::toTokenKind(multiCharOp);
 
-        if (kind == tokenKind::IDENTIFIER)
+        if (kindVal == tokenKind::IDENTIFIER)
         {
             // rollback
-            ch = lineData.substr(indicator, 1);
-            kind = origKind;
+            multiCharOp = ch;
+            kindVal = kind;
         }
         else
             indicator++;
 
-        pushToken(kind, ch);
+        pushToken(kindVal, multiCharOp);
     }
 
-    void Tokenizer::readString()
+    void Tokenizer::readString(const std::string& mark)
     {
         int start = indicator++;
         for (; indicator < lineData.size(); indicator++)
         {
-            if (lineData.substr(indicator, 1) == ch)
+            if (lineData.substr(indicator, 1) == mark)
             {
                 auto str = lineData.substr(start + 1, (indicator - start - 1));
                 pushToken(tokenKind::IDENTIFIER, str, true);
                 return;
             }
         }
-        std::cerr << "expected : " << ch << " but not given." << std::endl;
+        std::cerr << "expected : " << mark << " but not given." << std::endl;
         exit(1);
     }
 
     void Tokenizer::readIdentifier()
     {
         int start = indicator++;
+        tokenKind::Kind kind;
+
         for (; indicator < lineData.size(); indicator++)
         {
             kind = tokenKind::toTokenKind(lineData.substr(indicator, 1));
@@ -128,7 +109,9 @@ namespace Lexer
     {
         lineData = line;
         tokens.clear();
-        oss.str("");
+
+        std::string ch;
+        tokenKind::Kind kind;
 
         LOG_DEBUG(line);
         for (indicator = 0; indicator < lineData.size(); indicator++)
@@ -157,11 +140,11 @@ namespace Lexer
                 case tokenKind::LESSER_THAN:
                 case tokenKind::AMPERSAND:
                 case tokenKind::PIPE:
-                    readMultiCharOperator(2);
+                    readMultiCharOperator(kind, ch, 2);
                     break;
                 case tokenKind::APOSTROPHE:
                 case tokenKind::QUOTATION:
-                    readString();
+                    readString(ch);
                     break;
                 default:
                     pushToken(kind, ch);
