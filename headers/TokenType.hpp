@@ -19,15 +19,15 @@ namespace tokenType
     OPERATOR,
     };
 
-    bool isDigit(std::string& str);
+    bool isDigit(const std::string& str);
 
-    bool isFloat(std::string& str);
+    bool isFloat(const std::string& str);
 
-    bool isDouble(std::string& str);
+    bool isDouble(const std::string& str);
 
-    bool isIdentifier(std::string& str);
+    bool isIdentifier(const std::string& str);
 
-    Type toType(std::string& str);
+    Type toType(const std::string& str);
 
     std::string fromTokenType(Type val);
 }

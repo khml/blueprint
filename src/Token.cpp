@@ -3,22 +3,19 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "MacroLogger.hpp"
 #include "Token.hpp"
 
 namespace Lexer
 {
-    Token::Token(tokenKind::Kind kind, std::string& value) :kind(kind), value(value), type(tokenType::toType(value))
+    Token::Token(tokenKind::Kind kind, const std::string& value) :kind(kind), value(value),
+        type(tokenType::toType(value))
     {}
 
-    Token::Token(tokenKind::Kind kind, std::string&& value) :kind(kind), value(value), type(tokenType::toType(value))
-    {}
-
-    Token::Token(tokenKind::Kind kind, std::string& value, tokenType::Type type) :kind(kind), value(value), type(type)
-    {}
-
-    Token::Token(tokenKind::Kind kind, std::string&& value, tokenType::Type type) :kind(kind), value(value), type(type)
+    Token::Token(tokenKind::Kind kind, std::string value, tokenType::Type type) :kind(kind), value(std::move(value)),
+        type(type)
     {}
 
     Token::~Token()
@@ -36,7 +33,7 @@ namespace Lexer
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(tokenKind::Kind kindVal, std::string& value, bool isString)
+    void Tokenizer::pushToken(tokenKind::Kind kindVal, const std::string& value, bool isString)
     {
         if (isString)
             tokens.emplace_back(Token(kindVal, value, tokenType::STRING));
@@ -49,7 +46,7 @@ namespace Lexer
         }
     }
 
-    void Tokenizer::readMultiCharOperator(tokenKind::Kind kind, std::string& ch, const int size)
+    void Tokenizer::readMultiCharOperator(tokenKind::Kind kind, const std::string& ch, const int size)
     {
         if (indicator + size - 1 >= lineData.size())
         {

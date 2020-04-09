@@ -34,31 +34,31 @@ namespace tokenType
         }
     }
 
-    bool isDigit(string& str)
+    bool isDigit(const string& str)
     {
         static regex re("[0-9]+");
         return regex_match(str, re);
     }
 
-    bool isFloat(string& str)
+    bool isFloat(const string& str)
     {
         static regex re(R"(^(\d*[\\.]\d*)f$)");
         return regex_match(str, re);
     }
 
-    bool isDouble(string& str)
+    bool isDouble(const string& str)
     {
         static regex re(R"(^(\d*[\.]\d*)$)");
         return regex_match(str, re);
     }
 
-    bool isIdentifier(string& str)
+    bool isIdentifier(const string& str)
     {
         static regex re("[_a-zA-Z][_a-zA-Z0-9]?");
         return regex_match(str, re);
     }
 
-    Type toType(std::string& str)
+    Type toType(const std::string& str)
     {
         if (isIdentifier(str))
             return IDENTIFIER;
