@@ -46,16 +46,13 @@ namespace Lexer
     protected:
         std::string lineData;
         std::vector<Token> tokens;
-        std::ostringstream oss;
-        tokenKind::Kind kind;
-        std::string ch;
         int indicator = 0;
 
         void pushToken(tokenKind::Kind kindVal, std::string& value, bool isString = false);
 
-        void readMultiCharOperator(int size);
+        void readMultiCharOperator(tokenKind::Kind kind, std::string& ch, int size);
 
-        void readString();
+        void readString(const std::string& mark);
 
         void readIdentifier();
     };
