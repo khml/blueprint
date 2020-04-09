@@ -51,8 +51,6 @@ namespace Lexer
         std::string ch;
         int indicator = 0;
 
-        void pushToken(tokenKind::Kind kindVal, bool isString = false);
-
         void pushToken(tokenKind::Kind kindVal, std::string& value, bool isString = false);
 
         void readMultiCharOperator(int size);
