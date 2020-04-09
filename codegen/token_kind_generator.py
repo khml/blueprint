@@ -88,9 +88,9 @@ class Header:
 namespace {namespace}
 {{
 {content}
-    Kind toTokenKind(std::string& val);
+    Kind toTokenKind(const std::string& val);
     
-    Kind toTokenKind(std::string&& val);
+    Kind toTokenKind(const std::string&& val);
     
     std::string fromTokenKind(Kind val);
 }}
@@ -136,7 +136,7 @@ class Impl:
 namespace {namespace}
 {{
 {content}\
-    Kind toTokenKind(std::string&& val)
+    Kind toTokenKind(const std::string&& val)
     {{
         return toTokenKind(val);
     }}
@@ -189,7 +189,7 @@ namespace {namespace}
     @property
     def _to_enum(self):
         return """\
-    Kind toTokenKind(std::string& val)
+    Kind toTokenKind(const std::string& val)
     {
         static std::map<std::string, Kind> dictionary = toTokenKindMap();
 
