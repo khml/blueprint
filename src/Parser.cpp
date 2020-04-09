@@ -216,7 +216,7 @@ namespace AST
 
         if (consume(token::kind::SUB))
         {
-            auto unitNode = std::make_unique<ValueNode>(
+            auto unitNode = std::make_unique<IntNode>(
                 token::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
@@ -263,7 +263,7 @@ namespace AST
     std::unique_ptr<AstNode> Parser::primary()
     {
         if (!isNext(token::kind::PARENTHESIS_LEFT))
-            return std::move(std::make_unique<ValueNode>(consume()));
+            return std::move(value());
 
         auto identifier = consume();
         auto arguments = tuple();
@@ -292,6 +292,28 @@ namespace AST
         expect(right);
 
         return std::move(arguments);
+    }
+
+    std::unique_ptr<AstNode> Parser::value()
+    {
+        token::Token valueToken = consume();
+
+        switch (valueToken.type)
+        {
+            case token::type::INTEGER:
+                return std::move(std::make_unique<IntNode>(valueToken));
+            case token::type::FLOAT:
+                return std::move(std::make_unique<FloatNode>(valueToken));
+            case token::type::DOUBLE:
+                return std::move(std::make_unique<DoubleNode>(valueToken));
+            case token::type::STRING:
+                return std::move(std::make_unique<StringNode>(valueToken));
+            case token::type::IDENTIFIER:
+                return std::move(std::make_unique<VariableNode>(valueToken));
+            case token::type::OPERATOR:
+            default:
+                return std::move(std::make_unique<ValueNode>(valueToken));
+        }
     }
 
 }

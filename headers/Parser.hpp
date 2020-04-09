@@ -72,6 +72,8 @@ namespace AST
         std::vector<std::unique_ptr<AstNode>>
         tuple(token::kind::Kind delimiter = token::kind::COMMA, token::kind::Kind left = token::kind::PARENTHESIS_LEFT,
             token::kind::Kind right = token::kind::PARENTHESISE_RIGHT);
+
+        std::unique_ptr<AstNode> value();
     };
 }
 
