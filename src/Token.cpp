@@ -118,6 +118,36 @@ namespace Lexer
         pushToken(tokenKind::IDENTIFIER, identifier);
     }
 
+    void Tokenizer::readNumber()
+    {
+        int start = indicator;
+        bool isDotAppeared = false;
+        std::string ch;
+        for (; indicator < lineData.size(); indicator++)
+        {
+            ch = lineData.substr(indicator, 1);
+            if (ch == ".")
+            {
+                // allow dot only once
+                if (isDotAppeared)
+                    break;
+                isDotAppeared = true;
+            }
+            else if (isNumber(ch))
+                continue;
+            else if (ch == "f")
+            {
+                indicator++;
+                break;
+            }
+            else
+                break;
+        }
+        ch = lineData.substr(start, indicator - start);
+        pushToken(tokenKind::IDENTIFIER, ch);
+        --indicator;
+    }
+
     std::vector<Token> Tokenizer::tokenize(const std::string& line)
     {
         lineData = line;
@@ -140,7 +170,10 @@ namespace Lexer
                  * else, tokenize stored strings, and put the token.
                  */
                 case tokenKind::IDENTIFIER:
-                    readIdentifier();
+                    if (isNumber(ch))
+                        readNumber();
+                    else
+                        readIdentifier();
                     break;
                 case tokenKind::WHITESPACE:
                     break;

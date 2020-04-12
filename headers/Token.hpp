@@ -50,6 +50,8 @@ namespace Lexer
 
         void readString(const std::string& mark);
 
+        void readNumber();
+
         void readIdentifier();
     };
 
