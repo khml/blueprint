@@ -10,6 +10,19 @@
 
 namespace Lexer
 {
+    bool isNumber(const std::string& str)
+    {
+        try
+        {
+            stoi(str);
+            return true;
+        }
+        catch (const std::invalid_argument& _)
+        {
+            return false;
+        }
+    }
+
     Token::Token(tokenKind::Kind kind, const std::string& value) :kind(kind), value(value),
         type(tokenType::toType(value))
     {}
