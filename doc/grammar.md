@@ -12,6 +12,6 @@ sum = mul ( “+” mul | “-“ mul )*
 
 mul = primary ( “*” primary | “/“  primary | “%” primary )*
 
-primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ sum “)”
+primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ equality “)”
 
 args = sum ( “,” sum )*
