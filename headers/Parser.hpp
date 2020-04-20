@@ -5,53 +5,20 @@
 #ifndef BLUEPRINT_PARSER_HPP
 #define BLUEPRINT_PARSER_HPP
 
-#include <string>
 #include <vector>
 #include <memory>
 
-#ifdef DEBUG_GRAPH
-#include <sstream>
-#endif
-
-#include "Token.hpp"
+#include "Node.hpp"
+#include "Tokenizer.hpp"
 
 namespace AST
 {
-    class Node
-    {
-    public:
-        Node(std::string str);
-
-        Node(std::string str, Node* left, Node* right);
-
-        ~Node();
-
-#ifdef DEBUG_NODE
-
-        void print();
-
-#endif
-        std::string str;
-        Node* left = nullptr;
-        Node* right = nullptr;
-
-#ifdef DEBUG_GRAPH
-        int objId = 0;
-
-        void graph();
-
-    private:
-        void graph(std::ostringstream& dotFile);
-
-#endif
-    };
-
     class Parser
     {
     public:
         Parser();
 
-        ~Parser();
+        virtual ~Parser();
 
         std::unique_ptr<Node> parse(std::vector<Lexer::Token> tokenList);
 
