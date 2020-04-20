@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "MacroLogger.hpp"
-#include "Token.hpp"
+#include "Tokenizer.hpp"
 
 namespace Lexer
 {

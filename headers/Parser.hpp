@@ -9,7 +9,7 @@
 #include <memory>
 
 #include "Node.hpp"
-#include "Token.hpp"
+#include "Tokenizer.hpp"
 
 namespace AST
 {

@@ -2,8 +2,8 @@
 // Created by KHML on 2019-11-24.
 //
 
-#ifndef BLUEPRINT_TOKEN_HPP
-#define BLUEPRINT_TOKEN_HPP
+#ifndef BLUEPRINT_TOKENIZER_HPP
+#define BLUEPRINT_TOKENIZER_HPP
 
 #include <string>
 #include <sstream>
@@ -58,4 +58,4 @@ namespace Lexer
     void printTokens(std::vector<Token>& tokens);
 }
 
-#endif //BLUEPRINT_TOKEN_HPP
+#endif //BLUEPRINT_TOKENIZER_HPP
