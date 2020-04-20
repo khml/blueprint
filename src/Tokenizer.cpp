@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "MacroLogger.hpp"
-#include "Token.hpp"
+#include "Tokenizer.hpp"
 
 namespace Lexer
 {
@@ -152,6 +152,7 @@ namespace Lexer
     {
         lineData = line;
         tokens.clear();
+        pushToken(tokenKind::LINE_START, "");
 
         std::string ch;
         tokenKind::Kind kind;
