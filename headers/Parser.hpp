@@ -18,7 +18,7 @@ namespace AST
     public:
         Parser();
 
-        ~Parser();
+        virtual ~Parser();
 
         std::unique_ptr<Node> parse(std::vector<Lexer::Token> tokenList);
 

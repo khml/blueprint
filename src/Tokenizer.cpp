@@ -152,6 +152,7 @@ namespace Lexer
     {
         lineData = line;
         tokens.clear();
+        pushToken(tokenKind::LINE_START, "");
 
         std::string ch;
         tokenKind::Kind kind;
