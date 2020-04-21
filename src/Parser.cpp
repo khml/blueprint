@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <memory>
 
 #include "MacroLogger.hpp"
 #include "Parser.hpp"
@@ -16,13 +17,11 @@ namespace AST
     Parser::~Parser()
     = default;
 
-    std::unique_ptr<Node> Parser::parse(std::vector<Lexer::Token> tokenList)
+    std::unique_ptr<AstNode> Parser::parse(std::vector<Lexer::Token> tokenList)
     {
         tokens.clear();
         tokens.swap(tokenList);
-        auto node = std::unique_ptr<Node>(expression());
-
-        return node;
+        return expression();
     }
 
     bool Parser::hasNext()
@@ -45,7 +44,7 @@ namespace AST
         return tokens[tokenHead - 1];
     }
 
-    Node* Parser::expression()
+    std::unique_ptr<AstNode> Parser::expression()
     {
         LOG_DEBUG("expression");
 
@@ -56,20 +55,24 @@ namespace AST
         return equality();
     }
 
-    Node* Parser::assignment()
+    std::unique_ptr<AstNode> Parser::assignment()
     {
         LOG_DEBUG("assignment");
 
         if (moveNext().kind == tokenKind::IDENTIFIER && hasNext())
         {
-            auto varName = current().value;
+            auto variableToken = current();
             if (moveNext().kind == tokenKind::EQUAL)
             {
-                auto node = new Node(varName);
+                auto equalToken = current();
+
+                std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(variableToken);
 #ifdef DEBUG_GRAPH
-                node->objId = objId++;
+                variableNode->objId = objId++;
 #endif
-                node = new Node(current().value, node, equality());
+
+                auto right = equality();
+                auto node = makeBinaryOpNode(equalToken, variableNode, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -82,17 +85,19 @@ namespace AST
         return nullptr;
     }
 
-    Node* Parser::equality()
+    std::unique_ptr<AstNode> Parser::equality()
     {
         LOG_DEBUG("equality");
 
-        Node* node = relation();
+        auto node = relation();
 
         while (hasNext())
         {
             if (current().kind == tokenKind::AND || current().kind == tokenKind::OR)
             {
-                node = new Node(current().value, node, relation());
+                auto currentToken = current();
+                auto right = relation();
+                node = makeBinaryOpNode(currentToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -103,12 +108,14 @@ namespace AST
         return node;
     }
 
-    Node* Parser::relation()
+    std::unique_ptr<AstNode> Parser::relation()
     {
         LOG_DEBUG("relation");
 
-        Node* node = addition();
+        auto node = addition();
+        std::unique_ptr<AstNode> right;
 
+        auto currentToken = current();
         bool breakFlg = false;
         while (hasNext())
         {
@@ -119,7 +126,8 @@ namespace AST
                 case tokenKind::EQUIVALENCE:
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
-                    node = new Node(current().value, node, addition());
+                    right = addition();
+                    node = makeBinaryOpNode(currentToken, node, right);
 #ifdef DEBUG_GRAPH
                     node->objId = objId++;
 #endif
@@ -134,17 +142,19 @@ namespace AST
         return node;
     }
 
-    Node* Parser::addition()
+    std::unique_ptr<AstNode> Parser::addition()
     {
         LOG_DEBUG("addition");
 
-        Node* node = mul();
+        auto node = mul();
 
         while (hasNext())
         {
             if (current().kind == tokenKind::ADD || current().kind == tokenKind::SUB)
             {
-                node = new Node(current().value, node, mul());
+                auto currentToken = current();
+                auto right = mul();
+                node = makeBinaryOpNode(currentToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -155,17 +165,19 @@ namespace AST
         return node;
     }
 
-    Node* Parser::mul()
+    std::unique_ptr<AstNode> Parser::mul()
     {
         LOG_DEBUG("mul");
 
-        Node* node = primary();
+        auto node = primary();
         while (hasNext())
         {
             if (current().kind == tokenKind::ASTERISK || current().kind == tokenKind::SLASH
                 || current().kind == tokenKind::PERCENT)
             {
-                node = new Node(current().value, node, primary());
+                auto currentToken = current();
+                auto right = primary();
+                node = makeBinaryOpNode(currentToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -176,13 +188,14 @@ namespace AST
         return node;
     }
 
-    Node* Parser::primary()
+    std::unique_ptr<AstNode> Parser::primary()
     {
         LOG_DEBUG("primary");
 
         moveNext();
 
-        Node* node;
+        std::unique_ptr<AstNode> node;
+
         if (current().kind == tokenKind::PARENTHESIS_LEFT)
         {
             node = equality();
@@ -194,7 +207,7 @@ namespace AST
             }
         }
         else if (current().kind == tokenKind::IDENTIFIER)
-            node = new Node(current().value);
+            node = std::make_unique<PrimaryNode>(current());
         else
         {
             std::cerr << "expected IDENTIFIER token, but given token-kind=" <<
@@ -207,6 +220,15 @@ namespace AST
 #ifdef DEBUG_GRAPH
         node->objId = objId++;
 #endif
+        return node;
+    }
+
+    std::unique_ptr<BinaryOpNode>
+    Parser::makeBinaryOpNode(Lexer::Token& token, std::unique_ptr<AstNode>& left, std::unique_ptr<AstNode>& right)
+    {
+        auto node = std::make_unique<BinaryOpNode>(token);
+        node->left = std::move(left);
+        node->right = std::move(right);
         return node;
     }
 }
