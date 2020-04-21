@@ -15,7 +15,7 @@ int main()
 
     while (true)
     {
-        cerr << "=";
+        cerr << "> ";
         getline(cin, line);
 
         if (line == "end")
