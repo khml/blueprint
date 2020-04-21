@@ -20,8 +20,7 @@ namespace AST
 
         virtual ~Parser();
 
-        std::unique_ptr<Node> parse(std::vector<Lexer::Token> tokenList);
-
+        std::unique_ptr<AstNode> parse(std::vector<Lexer::Token> tokenList);
 
     protected:
         std::vector<Lexer::Token> tokens;
@@ -36,22 +35,25 @@ namespace AST
 
         Lexer::Token current();
 
-        Node* expression();
+        std::unique_ptr<AstNode> expression();
 
-        Node* assignment();
+        std::unique_ptr<AstNode> assignment();
 
-        Node* equality();
+        std::unique_ptr<AstNode> equality();
 
-        Node* relation();
+        std::unique_ptr<AstNode> relation();
 
-        Node* addition();
+        std::unique_ptr<AstNode> addition();
 
-        Node* mul();
+        std::unique_ptr<AstNode> mul();
 
-        Node* primary();
+        std::unique_ptr<AstNode> primary();
+
+    protected:
+        std::unique_ptr<BinaryOpNode>
+        makeBinaryOpNode(Lexer::Token& token, std::unique_ptr<AstNode>& left, std::unique_ptr<AstNode>& right);
 
 #ifdef DEBUG_GRAPH
-    private:
         int objId = 0;
 #endif
     };
