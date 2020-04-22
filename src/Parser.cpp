@@ -215,7 +215,8 @@ namespace AST
             exit(1);
         }
 
-        moveNext();
+        if (hasNext())
+            moveNext();
 
 #ifdef DEBUG_GRAPH
         node->objId = objId++;

@@ -126,7 +126,7 @@ namespace AST
 #ifdef DEBUG_NODE
     void BinaryOpNode::print()
     {
-        std::cerr << "node: " << token.value;
+        std::cerr << "[BinaryOpNode] op: " << token.value;
         if (left)
             std::cerr << ", left: " << left->token.value;
         if (right)
