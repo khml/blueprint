@@ -34,7 +34,7 @@ namespace AST
         return tokens[tokenHead];
     }
 
-    bool Parser::current(tokenKind::Kind kind)
+    bool Parser::isCurrent(tokenKind::Kind kind)
     {
         return tokens[tokenHead].kind == kind;
     }
@@ -49,7 +49,7 @@ namespace AST
         return tokens[++tokenHead];
     }
 
-    bool Parser::next(tokenKind::Kind kind)
+    bool Parser::isNext(tokenKind::Kind kind)
     {
         return tokens[tokenHead + 1].kind == kind;
     }

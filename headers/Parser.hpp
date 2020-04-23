@@ -31,11 +31,11 @@ namespace AST
 
         Lexer::Token current();
 
-        bool current(tokenKind::Kind kind);
+        bool isCurrent(tokenKind::Kind kind);
 
         Lexer::Token next();
 
-        bool next(tokenKind::Kind kind);
+        bool isNext(tokenKind::Kind kind);
 
         Lexer::Token prev();
 
