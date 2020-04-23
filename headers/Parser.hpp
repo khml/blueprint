@@ -29,11 +29,15 @@ namespace AST
 
         bool hasNext();
 
-        Lexer::Token moveNext();
+        Lexer::Token current();
+
+        bool current(tokenKind::Kind kind);
+
+        Lexer::Token next();
+
+        bool next(tokenKind::Kind kind);
 
         Lexer::Token prev();
-
-        Lexer::Token current();
 
         std::unique_ptr<AstNode> expression();
 
