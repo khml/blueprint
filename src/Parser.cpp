@@ -74,29 +74,21 @@ namespace AST
     {
         LOG_DEBUG("assignment");
 
-        if (moveNext().kind == tokenKind::IDENTIFIER && hasNext())
+        if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
         {
-            auto variableToken = current();
-            if (next().kind == tokenKind::EQUAL)
-            {
-                auto equalToken = current();
-
-                std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(variableToken);
+            std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
 #ifdef DEBUG_GRAPH
-                variableNode->objId = objId++;
+            variableNode->objId = objId++;
 #endif
-
-                auto right = equality();
-                auto node = makeBinaryOpNode(equalToken, variableNode, right);
+            auto equalToken = consume();
+            auto right = equality();
+            auto node = makeBinaryOpNode(equalToken, variableNode, right);
 #ifdef DEBUG_GRAPH
-                node->objId = objId++;
+            node->objId = objId++;
 #endif
-                return node;
-            }
-            prev();
+            return node;
         }
 
-        prev();
         return nullptr;
     }
 
@@ -108,11 +100,11 @@ namespace AST
 
         while (hasNext())
         {
-            if (current().kind == tokenKind::AND || current().kind == tokenKind::OR)
+            if (isCurrent(tokenKind::AND) || isCurrent(tokenKind::OR))
             {
-                auto currentToken = current();
+                auto logicalOpToken = consume();
                 auto right = relation();
-                node = makeBinaryOpNode(currentToken, node, right);
+                node = makeBinaryOpNode(logicalOpToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -127,11 +119,13 @@ namespace AST
     {
         LOG_DEBUG("relation");
 
-        auto node = addition();
-        std::unique_ptr<AstNode> right;
+        static auto makeNode = [](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
+            std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
+        {
+            return makeBinaryOpNode(logicalOpToken, left, right);
+        };
 
-        auto currentToken = current();
-        bool breakFlg = false;
+        auto node = addition();
         while (hasNext())
         {
             switch (current().kind)
@@ -141,18 +135,14 @@ namespace AST
                 case tokenKind::EQUIVALENCE:
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
-                    right = addition();
-                    node = makeBinaryOpNode(currentToken, node, right);
+                    node = makeNode(consume(), node, addition());
 #ifdef DEBUG_GRAPH
                     node->objId = objId++;
 #endif
                     break;
                 default:
-                    breakFlg = true;
-                    break;
+                    return node;
             }
-            if (breakFlg)
-                break;
         }
         return node;
     }
@@ -165,11 +155,11 @@ namespace AST
 
         while (hasNext())
         {
-            if (current().kind == tokenKind::ADD || current().kind == tokenKind::SUB)
+            if (isCurrent(tokenKind::ADD) || isCurrent(tokenKind::SUB))
             {
-                auto currentToken = current();
+                auto additionToken = consume();
                 auto right = mul();
-                node = makeBinaryOpNode(currentToken, node, right);
+                node = makeBinaryOpNode(additionToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -187,12 +177,12 @@ namespace AST
         auto node = primary();
         while (hasNext())
         {
-            if (current().kind == tokenKind::ASTERISK || current().kind == tokenKind::SLASH
-                || current().kind == tokenKind::PERCENT)
+            if (isCurrent(tokenKind::ASTERISK) || isCurrent(tokenKind::SLASH) ||
+                isCurrent(tokenKind::PERCENT))
             {
-                auto currentToken = current();
+                auto mulToken = consume();
                 auto right = primary();
-                node = makeBinaryOpNode(currentToken, node, right);
+                node = makeBinaryOpNode(mulToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
 #endif
@@ -207,21 +197,20 @@ namespace AST
     {
         LOG_DEBUG("primary");
 
-        next();
-
         std::unique_ptr<AstNode> node;
 
-        if (current().kind == tokenKind::PARENTHESIS_LEFT)
+        if (isCurrent(tokenKind::PARENTHESIS_LEFT))
         {
+            consume();
             node = equality();
-            if (hasNext() && current().kind != tokenKind::PARENTHESISE_RIGHT)
+            if (!isCurrent(tokenKind::PARENTHESISE_RIGHT))
             {
                 std::cerr << "expected ')' but given token-kind=" <<
                           tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
                 exit(1);
             }
         }
-        else if (current().kind == tokenKind::IDENTIFIER)
+        else if (isCurrent(tokenKind::IDENTIFIER))
             node = std::make_unique<PrimaryNode>(current());
         else
         {
