@@ -39,6 +39,8 @@ namespace AST
 
         Lexer::Token prev();
 
+        Lexer::Token consume();
+
         std::unique_ptr<AstNode> expression();
 
         std::unique_ptr<AstNode> assignment();

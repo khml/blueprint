@@ -39,6 +39,11 @@ namespace AST
         return tokens[tokenHead].kind == kind;
     }
 
+    Lexer::Token Parser::consume()
+    {
+        return tokens[tokenHead++];
+    }
+
     Lexer::Token Parser::next()
     {
         return tokens[++tokenHead];
