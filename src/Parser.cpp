@@ -34,9 +34,24 @@ namespace AST
         return tokens[tokenHead];
     }
 
-    Lexer::Token Parser::moveNext()
+    bool Parser::current(tokenKind::Kind kind)
+    {
+        return tokens[tokenHead].kind == kind;
+    }
+
+    Lexer::Token Parser::consume()
+    {
+        return tokens[tokenHead++];
+    }
+
+    Lexer::Token Parser::next()
     {
         return tokens[++tokenHead];
+    }
+
+    bool Parser::next(tokenKind::Kind kind)
+    {
+        return tokens[tokenHead + 1].kind == kind;
     }
 
     Lexer::Token Parser::prev()
@@ -62,7 +77,7 @@ namespace AST
         if (moveNext().kind == tokenKind::IDENTIFIER && hasNext())
         {
             auto variableToken = current();
-            if (moveNext().kind == tokenKind::EQUAL)
+            if (next().kind == tokenKind::EQUAL)
             {
                 auto equalToken = current();
 
@@ -192,7 +207,7 @@ namespace AST
     {
         LOG_DEBUG("primary");
 
-        moveNext();
+        next();
 
         std::unique_ptr<AstNode> node;
 
@@ -216,7 +231,7 @@ namespace AST
         }
 
         if (hasNext())
-            moveNext();
+            next();
 
 #ifdef DEBUG_GRAPH
         node->objId = objId++;
