@@ -41,6 +41,8 @@ namespace AST
 
         Lexer::Token consume();
 
+        bool consume(tokenKind::Kind expected);
+
         std::unique_ptr<AstNode> expression();
 
         std::unique_ptr<AstNode> assignment();
@@ -52,6 +54,8 @@ namespace AST
         std::unique_ptr<AstNode> addition();
 
         std::unique_ptr<AstNode> mul();
+
+        std::unique_ptr<AstNode> unary();
 
         std::unique_ptr<AstNode> primary();
 
