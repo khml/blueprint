@@ -10,7 +10,9 @@ relation = sum (“比較演算子“ sum )*
 
 sum = mul ( “+” mul | “-“ mul )*
 
-mul = primary ( “*” primary | “/“  primary | “%” primary )*
+mul = primary ( “*” unary | “/“  unary | “%” unary )*
+
+unary = ( "+" | "-" ) primary
 
 primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ equality “)”
 
