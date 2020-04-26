@@ -44,6 +44,14 @@ namespace AST
         return tokens[tokenHead++];
     }
 
+    bool Parser::consume(tokenKind::Kind expected)
+    {
+        bool isCurrentExpected = isCurrent(expected);
+        if (isCurrentExpected)
+            tokenHead++;
+        return isCurrentExpected;
+    }
+
     Lexer::Token Parser::next()
     {
         return tokens[++tokenHead];
@@ -119,7 +127,7 @@ namespace AST
     {
         LOG_DEBUG("relation");
 
-        static auto makeNode = [](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
+        static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
             std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
         {
             return makeBinaryOpNode(logicalOpToken, left, right);
@@ -174,14 +182,14 @@ namespace AST
     {
         LOG_DEBUG("mul");
 
-        auto node = primary();
+        auto node = unary();
         while (hasNext())
         {
             if (isCurrent(tokenKind::ASTERISK) || isCurrent(tokenKind::SLASH) ||
                 isCurrent(tokenKind::PERCENT))
             {
                 auto mulToken = consume();
-                auto right = primary();
+                auto right = unary();
                 node = makeBinaryOpNode(mulToken, node, right);
 #ifdef DEBUG_GRAPH
                 node->objId = objId++;
@@ -193,17 +201,37 @@ namespace AST
         return node;
     }
 
+    std::unique_ptr<AstNode> Parser::unary()
+    {
+        LOG_DEBUG("unary");
+
+        static auto productToken = Lexer::Token(tokenKind::ASTERISK, "*", tokenType::OPERATOR);
+
+        if (consume(tokenKind::SUB))
+        {
+            auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
+#ifdef DEBUG_GRAPH
+            unitNode->objId = objId++;
+#endif
+            auto left = primary();
+            return makeBinaryOpNode(productToken, unitNode, left);
+        }
+
+        consume(tokenKind::ADD);
+
+        return primary();
+    }
+
     std::unique_ptr<AstNode> Parser::primary()
     {
         LOG_DEBUG("primary");
 
         std::unique_ptr<AstNode> node;
 
-        if (isCurrent(tokenKind::PARENTHESIS_LEFT))
+        if (consume(tokenKind::PARENTHESIS_LEFT))
         {
-            consume();
             node = equality();
-            if (!isCurrent(tokenKind::PARENTHESISE_RIGHT))
+            if (!consume(tokenKind::PARENTHESISE_RIGHT))
             {
                 std::cerr << "expected ')' but given token-kind=" <<
                           tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
@@ -234,6 +262,9 @@ namespace AST
         auto node = std::make_unique<BinaryOpNode>(token);
         node->left = std::move(left);
         node->right = std::move(right);
+#ifdef DEBUG_GRAPH
+        node->objId = objId++;
+#endif
         return node;
     }
 }

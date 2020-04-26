@@ -21,6 +21,10 @@ namespace Lexer
 
         Token(tokenKind::Kind kind, std::string value, tokenType::Type type);
 
+        Token(tokenKind::Kind kind, tokenType::Type type);
+
+        Token(const Token& orig);
+
         virtual ~Token();
 
         const tokenKind::Kind kind;
