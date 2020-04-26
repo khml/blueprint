@@ -59,7 +59,7 @@ namespace AST
 
         std::unique_ptr<AstNode> primary();
 
-        static std::unique_ptr<BinaryOpNode>
+        std::unique_ptr<BinaryOpNode>
         makeBinaryOpNode(Lexer::Token& token, std::unique_ptr<AstNode>& left, std::unique_ptr<AstNode>& right);
 
 #ifdef DEBUG_GRAPH
