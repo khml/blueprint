@@ -31,6 +31,13 @@ namespace Lexer
         type(type)
     {}
 
+    Token::Token(const tokenKind::Kind kind, const tokenType::Type type) :kind(kind), type(type),
+        value(tokenKind::fromTokenKind(kind))
+    {}
+
+    Token::Token(const Lexer::Token& orig) :kind(orig.kind), type(orig.type), value(orig.value)
+    {}
+
     Token::~Token()
     = default;
 
