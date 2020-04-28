@@ -6,7 +6,7 @@ expr = (identifier “=“ ) equality
 
 equality = relation ( “&&” relation | “||” relation)
 
-relation = sum (“比較演算子“ sum )*
+relation = sum ( [ "==", <", "<=", ">=", ">" ] sum )*
 
 sum = mul ( “+” mul | “-“ mul )*
 
