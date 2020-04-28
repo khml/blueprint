@@ -17,3 +17,5 @@ unary = ( "+" | "-" ) primary
 primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ equality “)”
 
 args = sum ( “,” sum )*
+
+identifier = [_a-zA-Z][_a-zA-Z0-9]? | [0-9] ( "." [0-9]+ "f"? )
