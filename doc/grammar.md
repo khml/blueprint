@@ -2,6 +2,10 @@
 
 ## EBNF
 
+program = statement*
+
+statement = expr | "{" statement* "}"
+
 expr = (identifier “=“ ) equality
 
 equality = relation ( “&&” relation | “||” relation)
