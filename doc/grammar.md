@@ -10,12 +10,18 @@ relation = sum ( [ "==", <", "<=", ">=", ">" ] sum )*
 
 sum = mul ( “+” mul | “-“ mul )*
 
-mul = primary ( “*” unary | “/“  unary | “%” unary )*
+mul = unary ( “*” unary | “/“  unary | “%” unary )*
 
-unary = ( "+" | "-" ) primary
+unary = ( "+" | "-" ) priority
 
-primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ equality “)”
+priority = primary | “(“ equality “)”
 
-args = sum ( “,” sum )*
+primary = identifier | chain
 
-identifier = [_a-zA-Z][_a-zA-Z0-9]? | [0-9] ( "." [0-9]+ "f"? )
+chain = callee ( “.” callee )*
+
+callee = identifier “(“ ( args ) “)”
+
+args = equality ( “,” equality )*
+
+identifier = [_a-zA-Z][_a-zA-Z0-9]? | [0-9] ( "." [0-9]+ ) ( "f" )
