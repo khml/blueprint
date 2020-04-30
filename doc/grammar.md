@@ -2,18 +2,30 @@
 
 ## EBNF
 
+program = statement*
+
+statement = expr | "{" statement* "}"
+
 expr = (identifier “=“ ) equality
 
 equality = relation ( “&&” relation | “||” relation)
 
-relation = sum (“比較演算子“ sum )*
+relation = sum ( [ "==", <", "<=", ">=", ">" ] sum )*
 
 sum = mul ( “+” mul | “-“ mul )*
 
-mul = primary ( “*” unary | “/“  unary | “%” unary )*
+mul = unary ( “*” unary | “/“  unary | “%” unary )*
 
-unary = ( "+" | "-" ) primary
+unary = ( "+" | "-" ) priority
 
-primary = identifier ( “.” identifier( “(“ args “)” ) )* | “(“ equality “)”
+priority = primary | “(“ equality “)”
 
-args = sum ( “,” sum )*
+primary = identifier | chain
+
+chain = callee ( “.” callee )*
+
+callee = identifier “(“ ( args ) “)”
+
+args = equality ( “,” equality )*
+
+identifier = [_a-zA-Z][_a-zA-Z0-9]? | [0-9] ( "." [0-9]+ ) ( "f" )
