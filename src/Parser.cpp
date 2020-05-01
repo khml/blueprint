@@ -21,7 +21,7 @@ namespace AST
     {
         tokens.clear();
         tokens.swap(tokenList);
-        return expression();
+        return std::move(expression());
     }
 
     bool Parser::hasNext()
@@ -73,9 +73,9 @@ namespace AST
 
         auto node = assignment();
         if (node != nullptr)
-            return node;
+            return std::move(node);
 
-        return equality();
+        return std::move(equality());
     }
 
     std::unique_ptr<AstNode> Parser::assignment()
@@ -94,7 +94,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
             node->objId = objId++;
 #endif
-            return node;
+            return std::move(node);
         }
 
         return nullptr;
@@ -113,14 +113,11 @@ namespace AST
                 auto logicalOpToken = consume();
                 auto right = relation();
                 node = makeBinaryOpNode(logicalOpToken, node, right);
-#ifdef DEBUG_GRAPH
-                node->objId = objId++;
-#endif
             }
             else
                 break;
         }
-        return node;
+        return std::move(node);
     }
 
     std::unique_ptr<AstNode> Parser::relation()
@@ -130,7 +127,7 @@ namespace AST
         static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
             std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
         {
-            return makeBinaryOpNode(logicalOpToken, left, right);
+            return std::move(makeBinaryOpNode(logicalOpToken, left, right));
         };
 
         auto node = addition();
@@ -144,15 +141,12 @@ namespace AST
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
                     node = makeNode(consume(), node, addition());
-#ifdef DEBUG_GRAPH
-                    node->objId = objId++;
-#endif
                     break;
                 default:
-                    return node;
+                    return std::move(node);
             }
         }
-        return node;
+        return std::move(node);
     }
 
     std::unique_ptr<AstNode> Parser::addition()
@@ -175,7 +169,7 @@ namespace AST
             else
                 break;
         }
-        return node;
+        return std::move(node);
     }
 
     std::unique_ptr<AstNode> Parser::mul()
@@ -191,14 +185,11 @@ namespace AST
                 auto mulToken = consume();
                 auto right = unary();
                 node = makeBinaryOpNode(mulToken, node, right);
-#ifdef DEBUG_GRAPH
-                node->objId = objId++;
-#endif
             }
             else
                 break;
         }
-        return node;
+        return std::move(node);
     }
 
     std::unique_ptr<AstNode> Parser::unary()
@@ -214,12 +205,12 @@ namespace AST
             unitNode->objId = objId++;
 #endif
             auto left = primary();
-            return makeBinaryOpNode(productToken, unitNode, left);
+            return std::move(makeBinaryOpNode(productToken, unitNode, left));
         }
 
         consume(tokenKind::ADD);
 
-        return primary();
+        return std::move(primary());
     }
 
     std::unique_ptr<AstNode> Parser::primary()
@@ -253,7 +244,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
         node->objId = objId++;
 #endif
-        return node;
+        return std::move(node);
     }
 
     std::unique_ptr<BinaryOpNode>
@@ -265,6 +256,6 @@ namespace AST
 #ifdef DEBUG_GRAPH
         node->objId = objId++;
 #endif
-        return node;
+        return std::move(node);
     }
 }
