@@ -15,35 +15,6 @@
 
 namespace AST
 {
-    class Node
-    {
-    public:
-        explicit Node(std::string str);
-
-        Node(std::string str, Node* left, Node* right);
-
-        ~Node();
-
-#ifdef DEBUG_NODE
-
-        void print();
-
-#endif
-        std::string str;
-        Node* left = nullptr;
-        Node* right = nullptr;
-
-#ifdef DEBUG_GRAPH
-        int objId = 0;
-
-        void graph();
-
-    private:
-        void graph(std::ostringstream& dotFile);
-
-#endif
-    };
-
     class AstNode
     {
     public:
