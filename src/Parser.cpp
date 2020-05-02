@@ -8,6 +8,8 @@
 #include "MacroLogger.hpp"
 #include "Parser.hpp"
 
+#define MakeBinaryOpNode(token, left, right) std::make_unique<BinaryOpNode>(token, std::move(left), std::move(right))
+
 namespace AST
 {
 
@@ -87,8 +89,7 @@ namespace AST
             std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
             auto equalToken = consume();
             auto right = equality();
-            auto node = std::make_unique<BinaryOpNode>(equalToken, std::move(variableNode), std::move(right));
-            return std::move(node);
+            return std::move(MakeBinaryOpNode(equalToken, variableNode, right));
         }
 
         return nullptr;
@@ -106,7 +107,7 @@ namespace AST
             {
                 auto logicalOpToken = consume();
                 auto right = relation();
-                node = std::make_unique<BinaryOpNode>(logicalOpToken, std::move(node), std::move(right));
+                node = MakeBinaryOpNode(logicalOpToken, node, right);
             }
             else
                 break;
@@ -121,7 +122,7 @@ namespace AST
         static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
             std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
         {
-            return std::move(std::make_unique<BinaryOpNode>(logicalOpToken, std::move(left), std::move(right)));
+            return std::move(MakeBinaryOpNode(logicalOpToken, left, right));
         };
 
         auto node = addition();
@@ -155,7 +156,7 @@ namespace AST
             {
                 auto additionToken = consume();
                 auto right = mul();
-                node = std::make_unique<BinaryOpNode>(additionToken, std::move(node), std::move(right));
+                node = MakeBinaryOpNode(additionToken, node, right);
             }
             else
                 break;
@@ -175,7 +176,7 @@ namespace AST
             {
                 auto mulToken = consume();
                 auto right = unary();
-                node = std::make_unique<BinaryOpNode>(mulToken, std::move(node), std::move(right));
+                node = MakeBinaryOpNode(mulToken, node, right);
             }
             else
                 break;
@@ -193,7 +194,7 @@ namespace AST
         {
             auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
             auto left = primary();
-            return std::make_unique<BinaryOpNode>(productToken, std::move(unitNode), std::move(left));
+            return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
 
         consume(tokenKind::ADD);
