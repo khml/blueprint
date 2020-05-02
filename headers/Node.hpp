@@ -31,13 +31,20 @@ namespace AST
 #endif
 
 #ifdef DEBUG_GRAPH
-        int objId = 0;
+        const int objId;
 
         virtual void graph();
 
         virtual void graph(std::ostringstream& dotFile);
 
 #endif
+
+    private:
+
+#ifdef DEBUG_GRAPH
+        static int objIdCounter;
+#endif
+
     };
 
     class PrimaryNode : public AstNode

@@ -85,15 +85,9 @@ namespace AST
         if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
         {
             std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
-#ifdef DEBUG_GRAPH
-            variableNode->objId = objId++;
-#endif
             auto equalToken = consume();
             auto right = equality();
             auto node = makeBinaryOpNode(equalToken, variableNode, right);
-#ifdef DEBUG_GRAPH
-            node->objId = objId++;
-#endif
             return std::move(node);
         }
 
@@ -162,9 +156,6 @@ namespace AST
                 auto additionToken = consume();
                 auto right = mul();
                 node = makeBinaryOpNode(additionToken, node, right);
-#ifdef DEBUG_GRAPH
-                node->objId = objId++;
-#endif
             }
             else
                 break;
@@ -201,9 +192,6 @@ namespace AST
         if (consume(tokenKind::SUB))
         {
             auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
-#ifdef DEBUG_GRAPH
-            unitNode->objId = objId++;
-#endif
             auto left = primary();
             return std::move(makeBinaryOpNode(productToken, unitNode, left));
         }
@@ -241,9 +229,6 @@ namespace AST
         if (hasNext())
             next();
 
-#ifdef DEBUG_GRAPH
-        node->objId = objId++;
-#endif
         return std::move(node);
     }
 
@@ -253,9 +238,6 @@ namespace AST
         auto node = std::make_unique<BinaryOpNode>(token);
         node->left = std::move(left);
         node->right = std::move(right);
-#ifdef DEBUG_GRAPH
-        node->objId = objId++;
-#endif
         return std::move(node);
     }
 }

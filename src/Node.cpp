@@ -10,11 +10,15 @@
 
 namespace AST
 {
-    AstNode::AstNode(const Lexer::Token& token) :token(token)
+    AstNode::AstNode(const Lexer::Token& token) :token(token), objId(objIdCounter++)
     {}
 
     AstNode::~AstNode()
     = default;
+
+#ifdef DEBUG_GRAPH
+    int AstNode::objIdCounter = 0;
+#endif
 
 #ifdef DEBUG_NODE
     void AstNode::print()
