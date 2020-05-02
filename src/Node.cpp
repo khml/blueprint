@@ -120,6 +120,10 @@ namespace AST
     BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstNode(token), left(nullptr), right(nullptr)
     {}
 
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right)
+        :AstNode(token), left(std::move(left)), right(std::move(right))
+    {}
+
     BinaryOpNode::~BinaryOpNode()
     = default;
 

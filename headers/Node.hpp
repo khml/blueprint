@@ -90,6 +90,8 @@ namespace AST
     public:
         explicit BinaryOpNode(const Lexer::Token& token);
 
+        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
+
         ~BinaryOpNode() override;
 
 #ifdef DEBUG_NODE
