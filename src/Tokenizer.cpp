@@ -10,19 +10,6 @@
 
 namespace Lexer
 {
-    bool isNumber(const std::string& str)
-    {
-        try
-        {
-            stoi(str);
-            return true;
-        }
-        catch (const std::invalid_argument& _)
-        {
-            return false;
-        }
-    }
-
     Token::Token(tokenKind::Kind kind, const std::string& value) :kind(kind), value(value),
         type(tokenType::toType(value))
     {}
@@ -140,7 +127,7 @@ namespace Lexer
                     break;
                 isDotAppeared = true;
             }
-            else if (isNumber(ch))
+            else if (tokenType::isDigit(ch))
                 continue;
             else if (ch == "f")
             {
@@ -177,7 +164,7 @@ namespace Lexer
                  * else, tokenize stored strings, and put the token.
                  */
                 case tokenKind::IDENTIFIER:
-                    if (isNumber(ch))
+                    if (tokenType::isDigit(ch))
                         readNumber();
                     else
                         readIdentifier();
