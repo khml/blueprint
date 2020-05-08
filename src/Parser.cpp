@@ -193,43 +193,44 @@ namespace AST
         if (consume(tokenKind::SUB))
         {
             auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
-            auto left = primary();
+            auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
 
         consume(tokenKind::ADD);
 
-        return std::move(primary());
+        return std::move(priority());
     }
 
-    std::unique_ptr<AstNode> Parser::primary()
+    std::unique_ptr<AstNode> Parser::priority()
     {
-        LOG_DEBUG("primary");
+        LOG_DEBUG("priority");
 
-        std::unique_ptr<AstNode> node;
+        if (current().kind == tokenKind::IDENTIFIER)
+            return std::move(primary());
 
-        if (consume(tokenKind::PARENTHESIS_LEFT))
+        if (!consume(tokenKind::PARENTHESIS_LEFT))
         {
-            node = equality();
-            if (!consume(tokenKind::PARENTHESISE_RIGHT))
-            {
-                std::cerr << "expected ')' but given token-kind=" <<
-                          tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
-                exit(1);
-            }
-        }
-        else if (isCurrent(tokenKind::IDENTIFIER))
-            node = std::make_unique<PrimaryNode>(current());
-        else
-        {
-            std::cerr << "expected IDENTIFIER token, but given token-kind=" <<
+            std::cerr << "expected '(' but given token-kind=" <<
                       tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         }
 
-        if (hasNext())
-            next();
+        std::unique_ptr<AstNode> node = equality();
+
+        if (!consume(tokenKind::PARENTHESISE_RIGHT))
+        {
+            std::cerr << "expected ')' but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            exit(1);
+        }
 
         return std::move(node);
     }
+
+    std::unique_ptr<AstNode> Parser::primary()
+    {
+        return std::move(std::make_unique<PrimaryNode>(consume()));
+    }
+
 }
