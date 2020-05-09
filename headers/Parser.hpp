@@ -57,6 +57,8 @@ namespace AST
 
         std::unique_ptr<AstNode> unary();
 
+        std::unique_ptr<AstNode> priority();
+
         std::unique_ptr<AstNode> primary();
     };
 }
