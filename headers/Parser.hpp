@@ -60,6 +60,8 @@ namespace AST
         std::unique_ptr<AstNode> priority();
 
         std::unique_ptr<AstNode> primary();
+
+        std::unique_ptr<AstNode> args();
     };
 }
 

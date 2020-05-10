@@ -233,4 +233,9 @@ namespace AST
         return std::move(std::make_unique<PrimaryNode>(consume()));
     }
 
+    std::unique_ptr<AstNode> Parser::args()
+    {
+        return std::move(equality());
+    }
+
 }
