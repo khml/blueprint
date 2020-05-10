@@ -18,13 +18,11 @@ mul = unary ( “*” unary | “/“  unary | “%” unary )*
 
 unary = ( "+" | "-" ) priority
 
-priority = primary | “(“ equality “)”
+priority = chain | “(“ equality “)”
 
-primary = identifier | chain
+chain = primary ( “.” primary )*
 
-chain = callee ( “.” callee )*
-
-callee = identifier “(“ ( args ) “)”
+primary = identifier ( “(“ ( args ) “)” )
 
 args = equality ( “,” equality )*
 
