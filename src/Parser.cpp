@@ -207,7 +207,7 @@ namespace AST
         LOG_DEBUG("priority");
 
         if (current().kind == tokenKind::IDENTIFIER)
-            return std::move(primary());
+            return std::move(chain());
 
         if (!consume(tokenKind::PARENTHESIS_LEFT))
         {
@@ -223,6 +223,25 @@ namespace AST
             std::cerr << "expected ')' but given token-kind=" <<
                       tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
+        }
+
+        return std::move(node);
+    }
+
+    std::unique_ptr<AstNode> Parser::chain()
+    {
+        auto node = primary();
+
+        while (hasNext())
+        {
+            if (isCurrent(tokenKind::DOT))
+            {
+                auto dot = consume();
+                auto next = primary();
+                node = std::move(MakeBinaryOpNode(dot, node, next));
+            }
+            else
+                break;
         }
 
         return std::move(node);
