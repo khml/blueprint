@@ -10,7 +10,7 @@
 
 namespace AST
 {
-    AstNode::AstNode(const Lexer::Token& token) :token(token), objId(objIdCounter++)
+    AstNode::AstNode() :objId(objIdCounter++)
     {}
 
     AstNode::~AstNode()
@@ -20,15 +20,26 @@ namespace AST
     int AstNode::objIdCounter = 0;
 #endif
 
+    AstOpNode::AstOpNode(const Lexer::Token& token) :token(token)
+    {}
+
+    AstOpNode::~AstOpNode()
+    = default;
+
+    std::string AstOpNode::value()
+    {
+        return token.value;
+    }
+
 #ifdef DEBUG_NODE
-    void AstNode::print()
+    void AstOpNode::print()
     {
         std::cerr << "node: " << token.value << std::endl;
     }
 #endif
 
 #ifdef DEBUG_GRAPH
-    void AstNode::graph()
+    void AstOpNode::graph()
     {
         std::ostringstream dotFile;
         dotFile
@@ -43,29 +54,30 @@ namespace AST
         std::cerr << dotFile.str() << std::endl;
     }
 
-    void AstNode::graph(std::ostringstream& dotFile)
+    void AstOpNode::graph(std::ostringstream& dotFile)
     {
         dotFile << "  " << objId << " [ label = \"" << token.value << "\" ]" << std::endl;
     }
 #endif
 
-    PrimaryNode::PrimaryNode(const Lexer::Token& token) :AstNode(token)
+    PrimaryNode::PrimaryNode(const Lexer::Token& token) :AstOpNode(token)
     {}
 
     PrimaryNode::~PrimaryNode()
     = default;
 
-    VariableNode::VariableNode(const Lexer::Token& token) :AstNode(token)
+    VariableNode::VariableNode(const Lexer::Token& token) :AstOpNode(token)
     {}
 
     VariableNode::~VariableNode()
     = default;
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstNode(token), left(nullptr), right(nullptr)
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
     {}
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right)
-        :AstNode(token), left(std::move(left)), right(std::move(right))
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left,
+        std::unique_ptr<AstNode> right)
+        :AstOpNode(token), left(std::move(left)), right(std::move(right))
     {}
 
     BinaryOpNode::~BinaryOpNode()
@@ -76,9 +88,9 @@ namespace AST
     {
         std::cerr << "[BinaryOpNode] op: " << token.value;
         if (left)
-            std::cerr << ", left: " << left->token.value;
+            std::cerr << ", left: " << left->value();
         if (right)
-            std::cerr << ", right: " << right->token.value;
+            std::cerr << ", right: " << right->value();
         std::cerr << std::endl;
 
         if (left)
@@ -91,7 +103,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void BinaryOpNode::graph(std::ostringstream& dotFile)
     {
-        AstNode::graph(dotFile);
+        AstOpNode::graph(dotFile);
         if (left != nullptr)
             dotFile << "  " << objId << "->" << left->objId << std::endl;
         if (right != nullptr)

@@ -192,7 +192,7 @@ namespace AST
 
         if (consume(tokenKind::SUB))
         {
-            auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
