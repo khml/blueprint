@@ -19,7 +19,7 @@ namespace AST
     Parser::~Parser()
     = default;
 
-    std::unique_ptr<AstNode> Parser::parse(std::vector<Lexer::Token> tokenList)
+    std::unique_ptr<AstOpNode> Parser::parse(std::vector<Lexer::Token> tokenList)
     {
         tokens.clear();
         tokens.swap(tokenList);
@@ -69,7 +69,7 @@ namespace AST
         return tokens[tokenHead - 1];
     }
 
-    std::unique_ptr<AstNode> Parser::expression()
+    std::unique_ptr<AstOpNode> Parser::expression()
     {
         LOG_DEBUG("expression");
 
@@ -80,13 +80,13 @@ namespace AST
         return std::move(equality());
     }
 
-    std::unique_ptr<AstNode> Parser::assignment()
+    std::unique_ptr<AstOpNode> Parser::assignment()
     {
         LOG_DEBUG("assignment");
 
         if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
         {
-            std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
+            std::unique_ptr<AstOpNode> variableNode = std::make_unique<VariableNode>(consume());
             auto equalToken = consume();
             auto right = equality();
             return std::move(MakeBinaryOpNode(equalToken, variableNode, right));
@@ -95,7 +95,7 @@ namespace AST
         return nullptr;
     }
 
-    std::unique_ptr<AstNode> Parser::equality()
+    std::unique_ptr<AstOpNode> Parser::equality()
     {
         LOG_DEBUG("equality");
 
@@ -115,12 +115,12 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::relation()
+    std::unique_ptr<AstOpNode> Parser::relation()
     {
         LOG_DEBUG("relation");
 
-        static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
-            std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
+        static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstOpNode>& left,
+            std::unique_ptr<AstOpNode>&& right) -> std::unique_ptr<AstOpNode>
         {
             return std::move(MakeBinaryOpNode(logicalOpToken, left, right));
         };
@@ -144,7 +144,7 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::addition()
+    std::unique_ptr<AstOpNode> Parser::addition()
     {
         LOG_DEBUG("addition");
 
@@ -164,7 +164,7 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::mul()
+    std::unique_ptr<AstOpNode> Parser::mul()
     {
         LOG_DEBUG("mul");
 
@@ -184,7 +184,7 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::unary()
+    std::unique_ptr<AstOpNode> Parser::unary()
     {
         LOG_DEBUG("unary");
 
@@ -192,7 +192,7 @@ namespace AST
 
         if (consume(tokenKind::SUB))
         {
-            auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
@@ -202,7 +202,7 @@ namespace AST
         return std::move(priority());
     }
 
-    std::unique_ptr<AstNode> Parser::priority()
+    std::unique_ptr<AstOpNode> Parser::priority()
     {
         LOG_DEBUG("priority");
 
@@ -216,7 +216,7 @@ namespace AST
             exit(1);
         }
 
-        std::unique_ptr<AstNode> node = equality();
+        std::unique_ptr<AstOpNode> node = equality();
 
         if (!consume(tokenKind::PARENTHESISE_RIGHT))
         {
@@ -228,7 +228,7 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::chain()
+    std::unique_ptr<AstOpNode> Parser::chain()
     {
         auto node = primary();
 
@@ -247,12 +247,12 @@ namespace AST
         return std::move(node);
     }
 
-    std::unique_ptr<AstNode> Parser::primary()
+    std::unique_ptr<AstOpNode> Parser::primary()
     {
         return std::move(std::make_unique<PrimaryNode>(consume()));
     }
 
-    std::unique_ptr<AstNode> Parser::args()
+    std::unique_ptr<AstOpNode> Parser::args()
     {
         return std::move(equality());
     }

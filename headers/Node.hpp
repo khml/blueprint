@@ -15,12 +15,12 @@
 
 namespace AST
 {
-    class AstNode
+    class AstOpNode
     {
     public:
-        explicit AstNode(const Lexer::Token& token);
+        explicit AstOpNode(const Lexer::Token& token);
 
-        virtual ~AstNode();
+        virtual ~AstOpNode();
 
         const Lexer::Token token;
 
@@ -47,7 +47,7 @@ namespace AST
 
     };
 
-    class PrimaryNode : public AstNode
+    class PrimaryNode : public AstOpNode
     {
     public:
         explicit PrimaryNode(const Lexer::Token& token);
@@ -55,7 +55,7 @@ namespace AST
         ~PrimaryNode() override;
     };
 
-    class VariableNode : public AstNode
+    class VariableNode : public AstOpNode
     {
     public:
         explicit VariableNode(const Lexer::Token& token);
@@ -63,12 +63,12 @@ namespace AST
         ~VariableNode() override;
     };
 
-    class BinaryOpNode : public AstNode
+    class BinaryOpNode : public AstOpNode
     {
     public:
         explicit BinaryOpNode(const Lexer::Token& token);
 
-        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
+        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstOpNode> left, std::unique_ptr<AstOpNode> right);
 
         ~BinaryOpNode() override;
 
@@ -78,8 +78,8 @@ namespace AST
 
 #endif
 
-        std::unique_ptr<AstNode> left;
-        std::unique_ptr<AstNode> right;
+        std::unique_ptr<AstOpNode> left;
+        std::unique_ptr<AstOpNode> right;
 
     protected:
 

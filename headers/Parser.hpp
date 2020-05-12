@@ -20,7 +20,7 @@ namespace AST
 
         virtual ~Parser();
 
-        std::unique_ptr<AstNode> parse(std::vector<Lexer::Token> tokenList);
+        std::unique_ptr<AstOpNode> parse(std::vector<Lexer::Token> tokenList);
 
     protected:
         std::vector<Lexer::Token> tokens;
@@ -43,27 +43,27 @@ namespace AST
 
         bool consume(tokenKind::Kind expected);
 
-        std::unique_ptr<AstNode> expression();
+        std::unique_ptr<AstOpNode> expression();
 
-        std::unique_ptr<AstNode> assignment();
+        std::unique_ptr<AstOpNode> assignment();
 
-        std::unique_ptr<AstNode> equality();
+        std::unique_ptr<AstOpNode> equality();
 
-        std::unique_ptr<AstNode> relation();
+        std::unique_ptr<AstOpNode> relation();
 
-        std::unique_ptr<AstNode> addition();
+        std::unique_ptr<AstOpNode> addition();
 
-        std::unique_ptr<AstNode> mul();
+        std::unique_ptr<AstOpNode> mul();
 
-        std::unique_ptr<AstNode> unary();
+        std::unique_ptr<AstOpNode> unary();
 
-        std::unique_ptr<AstNode> priority();
+        std::unique_ptr<AstOpNode> priority();
 
-        std::unique_ptr<AstNode> chain();
+        std::unique_ptr<AstOpNode> chain();
 
-        std::unique_ptr<AstNode> primary();
+        std::unique_ptr<AstOpNode> primary();
 
-        std::unique_ptr<AstNode> args();
+        std::unique_ptr<AstOpNode> args();
     };
 }
 
