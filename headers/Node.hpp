@@ -15,27 +15,27 @@
 
 namespace AST
 {
-    class AstOpNode
+    class AstNode
     {
     public:
-        explicit AstOpNode(const Lexer::Token& token);
+        AstNode();
 
-        virtual ~AstOpNode();
+        virtual ~AstNode();
 
-        const Lexer::Token token;
+        virtual std::string value() = 0;
 
 #ifdef DEBUG_NODE
 
-        virtual void print();
+        virtual void print() = 0;
 
 #endif
 
 #ifdef DEBUG_GRAPH
         const int objId;
 
-        virtual void graph();
+        virtual void graph() = 0;
 
-        virtual void graph(std::ostringstream& dotFile);
+        virtual void graph(std::ostringstream& dotFile) = 0;
 
 #endif
 
@@ -44,7 +44,33 @@ namespace AST
 #ifdef DEBUG_GRAPH
         static int objIdCounter;
 #endif
+    };
 
+    class AstOpNode : public AstNode
+    {
+    public:
+        explicit AstOpNode(const Lexer::Token& token);
+
+        ~AstOpNode() override;
+
+        std::string value() override;
+
+#ifdef DEBUG_NODE
+
+        void print() override;
+
+#endif
+
+#ifdef DEBUG_GRAPH
+
+        void graph() override;
+
+        void graph(std::ostringstream& dotFile) override;
+
+#endif
+
+    protected:
+        const Lexer::Token token;
     };
 
     class PrimaryNode : public AstOpNode
@@ -68,7 +94,7 @@ namespace AST
     public:
         explicit BinaryOpNode(const Lexer::Token& token);
 
-        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstOpNode> left, std::unique_ptr<AstOpNode> right);
+        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
 
         ~BinaryOpNode() override;
 
@@ -78,8 +104,8 @@ namespace AST
 
 #endif
 
-        std::unique_ptr<AstOpNode> left;
-        std::unique_ptr<AstOpNode> right;
+        std::unique_ptr<AstNode> left;
+        std::unique_ptr<AstNode> right;
 
     protected:
 

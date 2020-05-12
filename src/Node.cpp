@@ -10,15 +10,26 @@
 
 namespace AST
 {
-    AstOpNode::AstOpNode(const Lexer::Token& token) :token(token), objId(objIdCounter++)
+    AstNode::AstNode() :objId(objIdCounter++)
+    {}
+
+    AstNode::~AstNode()
+    = default;
+
+#ifdef DEBUG_GRAPH
+    int AstNode::objIdCounter = 0;
+#endif
+
+    AstOpNode::AstOpNode(const Lexer::Token& token) :token(token)
     {}
 
     AstOpNode::~AstOpNode()
     = default;
 
-#ifdef DEBUG_GRAPH
-    int AstOpNode::objIdCounter = 0;
-#endif
+    std::string AstOpNode::value()
+    {
+        return token.value;
+    }
 
 #ifdef DEBUG_NODE
     void AstOpNode::print()
@@ -64,7 +75,8 @@ namespace AST
     BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
     {}
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstOpNode> left, std::unique_ptr<AstOpNode> right)
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left,
+        std::unique_ptr<AstNode> right)
         :AstOpNode(token), left(std::move(left)), right(std::move(right))
     {}
 
@@ -76,9 +88,9 @@ namespace AST
     {
         std::cerr << "[BinaryOpNode] op: " << token.value;
         if (left)
-            std::cerr << ", left: " << left->token.value;
+            std::cerr << ", left: " << left->value();
         if (right)
-            std::cerr << ", right: " << right->token.value;
+            std::cerr << ", right: " << right->value();
         std::cerr << std::endl;
 
         if (left)
