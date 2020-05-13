@@ -249,7 +249,7 @@ namespace AST
 
     std::unique_ptr<AstNode> Parser::primary()
     {
-        return std::move(std::make_unique<PrimaryNode>(consume()));
+        return std::move(std::make_unique<AstOpNode>(consume()));
     }
 
     std::unique_ptr<AstNode> Parser::args()

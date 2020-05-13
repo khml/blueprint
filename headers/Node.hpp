@@ -73,14 +73,6 @@ namespace AST
         const Lexer::Token token;
     };
 
-    class PrimaryNode : public AstOpNode
-    {
-    public:
-        explicit PrimaryNode(const Lexer::Token& token);
-
-        ~PrimaryNode() override;
-    };
-
     class VariableNode : public AstOpNode
     {
     public:
@@ -108,6 +100,34 @@ namespace AST
         std::unique_ptr<AstNode> right;
 
     protected:
+
+#ifdef DEBUG_GRAPH
+
+        void graph(std::ostringstream& dotFile) override;
+
+#endif
+    };
+
+    class ArgsNode : public AstNode
+    {
+    public:
+        ArgsNode();
+
+        ~ArgsNode() override;
+
+        std::string value() override;
+
+        void push(std::unique_ptr<AstNode>& node);
+
+        size_t size();
+
+        std::vector<std::unique_ptr<AstNode>> args;
+
+#ifdef DEBUG_NODE
+
+        void print() override;
+
+#endif
 
 #ifdef DEBUG_GRAPH
 
