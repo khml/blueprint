@@ -73,14 +73,6 @@ namespace AST
         const Lexer::Token token;
     };
 
-    class PrimaryNode : public AstOpNode
-    {
-    public:
-        explicit PrimaryNode(const Lexer::Token& token);
-
-        ~PrimaryNode() override;
-    };
-
     class VariableNode : public AstOpNode
     {
     public:

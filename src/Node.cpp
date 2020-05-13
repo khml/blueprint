@@ -60,12 +60,6 @@ namespace AST
     }
 #endif
 
-    PrimaryNode::PrimaryNode(const Lexer::Token& token) :AstOpNode(token)
-    {}
-
-    PrimaryNode::~PrimaryNode()
-    = default;
-
     VariableNode::VariableNode(const Lexer::Token& token) :AstOpNode(token)
     {}
 
