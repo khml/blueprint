@@ -108,4 +108,44 @@ namespace AST
             right->graph(dotFile);
     }
 #endif
+
+    ArgsNode::ArgsNode()
+    = default;
+
+    ArgsNode::~ArgsNode()
+    = default;
+
+    std::string ArgsNode::value()
+    {
+        return "Args";
+    }
+
+    void ArgsNode::push(std::unique_ptr<AstNode>& node)
+    {
+        args.emplace_back(std::move(node));
+    }
+
+    size_t ArgsNode::size()
+    {
+        return args.size();
+    }
+
+#ifdef DEBUG_NODE
+    void ArgsNode::print()
+    {
+        std::cerr << "[ArgsNode]";
+
+        std::cerr << std::endl;
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void ArgsNode::graph(std::ostringstream& dotFile)
+    {
+        for (auto& item : args)
+            dotFile << "  " << objId << "->" << item->objId << std::endl;;
+        for (auto& item : args)
+            item->graph(dotFile);
+    }
+#endif
 }
