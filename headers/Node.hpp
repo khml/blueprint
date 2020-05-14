@@ -135,6 +135,33 @@ namespace AST
 
 #endif
     };
+
+    class CalleeNode : public AstNode
+    {
+    public:
+        CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args);
+
+        ~CalleeNode() override;
+
+        std::string value() override;
+
+#ifdef DEBUG_NODE
+
+        void print() override;
+
+#endif
+
+#ifdef DEBUG_GRAPH
+
+        void graph(std::ostringstream& dotFile) override;
+
+#endif
+
+    protected:
+        const Lexer::Token token;
+        const std::unique_ptr<ArgsNode> args;
+    };
+
 }
 
 #endif //BLUEPRINT_NODE_HPP

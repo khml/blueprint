@@ -148,4 +148,34 @@ namespace AST
             item->graph(dotFile);
     }
 #endif
+
+    CalleeNode::CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args) :token(token),
+        args(std::move(args))
+    {}
+
+    CalleeNode::~CalleeNode()
+    = default;
+
+    std::string CalleeNode::value()
+    {
+        return "Callee: " + token.value + " : " + args->value();
+    }
+
+#ifdef DEBUG_NODE
+    void CalleeNode::print()
+    {
+        std::cerr << "[Callee]";
+
+        std::cerr << std::endl;
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void CalleeNode::graph(std::ostringstream& dotFile)
+    {
+        dotFile << "  " << objId << " [ label = \"" << token.value << " Callee " << "\" ]" << std::endl;
+        dotFile << "  " << objId << "->" << args->objId << std::endl;
+        args->graph(dotFile);
+    }
+#endif
 }
