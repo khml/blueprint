@@ -18,6 +18,21 @@ namespace AST
 
 #ifdef DEBUG_GRAPH
     int AstNode::objIdCounter = 0;
+
+    void AstNode::graph()
+    {
+        std::ostringstream dotFile;
+        dotFile
+            << "digraph AST {" << std::endl
+            << "  graph [" << std::endl
+            << "    dpi = 300;" << std::endl
+            << "    ratio = 0.5;" << std::endl
+            << "  ]" << std::endl;
+        graph(dotFile);
+        dotFile << "}" << std::endl;
+
+        std::cerr << dotFile.str() << std::endl;
+    }
 #endif
 
     AstOpNode::AstOpNode(const Lexer::Token& token) :token(token)
@@ -39,21 +54,6 @@ namespace AST
 #endif
 
 #ifdef DEBUG_GRAPH
-    void AstOpNode::graph()
-    {
-        std::ostringstream dotFile;
-        dotFile
-            << "digraph AST {" << std::endl
-            << "  graph [" << std::endl
-            << "    dpi = 300;" << std::endl
-            << "    ratio = 0.5;" << std::endl
-            << "  ]" << std::endl;
-        graph(dotFile);
-        dotFile << "}" << std::endl;
-
-        std::cerr << dotFile.str() << std::endl;
-    }
-
     void AstOpNode::graph(std::ostringstream& dotFile)
     {
         dotFile << "  " << objId << " [ label = \"" << token.value << "\" ]" << std::endl;
