@@ -33,7 +33,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
         const int objId;
 
-        virtual void graph() = 0;
+        virtual void graph();
 
         virtual void graph(std::ostringstream& dotFile) = 0;
 
@@ -62,8 +62,6 @@ namespace AST
 #endif
 
 #ifdef DEBUG_GRAPH
-
-        void graph() override;
 
         void graph(std::ostringstream& dotFile) override;
 
