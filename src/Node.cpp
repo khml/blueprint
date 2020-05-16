@@ -168,7 +168,7 @@ namespace AST
 
     std::string CalleeNode::value()
     {
-        return "Callee: " + token.value + " : " + args->value();
+        return token.value + args->value();
     }
 
 #ifdef DEBUG_NODE
