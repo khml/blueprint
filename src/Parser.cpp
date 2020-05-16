@@ -249,7 +249,11 @@ namespace AST
 
     std::unique_ptr<AstNode> Parser::primary()
     {
-        return std::move(std::make_unique<AstOpNode>(consume()));
+        if(!isNext(tokenKind::PARENTHESIS_LEFT))
+            return std::move(std::make_unique<AstOpNode>(consume()));
+
+        auto identifier = consume();
+        return std::move(std::make_unique<CalleeNode>(identifier, std::move(args())));
     }
 
     std::unique_ptr<ArgsNode> Parser::args()
