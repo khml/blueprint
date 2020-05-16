@@ -175,7 +175,7 @@ namespace AST
 #ifdef DEBUG_NODE
     void CalleeNode::print()
     {
-        std::cerr << "[Callee]";
+        std::cerr << "[Callee]: " + value();
 
         std::cerr << std::endl;
     }
@@ -184,7 +184,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void CalleeNode::graph(std::ostringstream& dotFile)
     {
-        dotFile << "  " << objId << " [ label = \"" << token.value << " Callee " << "\" ]" << std::endl;
+        dotFile << "  " << objId << " [ label = \"" << token.value << args->value() << "\" ]" << std::endl;
         dotFile << "  " << objId << "->" << args->objId << std::endl;
         args->graph(dotFile);
     }
