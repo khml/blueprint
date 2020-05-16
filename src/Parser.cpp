@@ -252,9 +252,12 @@ namespace AST
         return std::move(std::make_unique<AstOpNode>(consume()));
     }
 
-    std::unique_ptr<AstNode> Parser::args()
+    std::unique_ptr<ArgsNode> Parser::args()
     {
-        return std::move(equality());
+        auto arguments = std::make_unique<ArgsNode>();
+        auto arg =  std::move(equality());
+        arguments->push(arg);
+        return std::move(arguments);
     }
 
 }
