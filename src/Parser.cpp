@@ -87,9 +87,7 @@ namespace AST
         if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
         {
             std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
-            auto equalToken = consume();
-            auto right = equality();
-            return std::move(MakeBinaryOpNode(equalToken, variableNode, right));
+            return std::move(MakeBinaryOpNode(consume(), variableNode, equality()));
         }
 
         return nullptr;
@@ -105,9 +103,7 @@ namespace AST
         {
             if (isCurrent(tokenKind::AND) || isCurrent(tokenKind::OR))
             {
-                auto logicalOpToken = consume();
-                auto right = relation();
-                node = MakeBinaryOpNode(logicalOpToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, relation());
             }
             else
                 break;
@@ -119,12 +115,6 @@ namespace AST
     {
         LOG_DEBUG("relation");
 
-        static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
-            std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
-        {
-            return std::move(MakeBinaryOpNode(logicalOpToken, left, right));
-        };
-
         auto node = addition();
         while (hasNext())
         {
@@ -135,7 +125,7 @@ namespace AST
                 case tokenKind::EQUIVALENCE:
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
-                    node = makeNode(consume(), node, addition());
+                    node = MakeBinaryOpNode(consume(), node, addition());
                     break;
                 default:
                     return std::move(node);
@@ -154,9 +144,7 @@ namespace AST
         {
             if (isCurrent(tokenKind::ADD) || isCurrent(tokenKind::SUB))
             {
-                auto additionToken = consume();
-                auto right = mul();
-                node = MakeBinaryOpNode(additionToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, mul());
             }
             else
                 break;
@@ -174,9 +162,7 @@ namespace AST
             if (isCurrent(tokenKind::ASTERISK) || isCurrent(tokenKind::SLASH) ||
                 isCurrent(tokenKind::PERCENT))
             {
-                auto mulToken = consume();
-                auto right = unary();
-                node = MakeBinaryOpNode(mulToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, unary());
             }
             else
                 break;
@@ -192,7 +178,7 @@ namespace AST
 
         if (consume(tokenKind::SUB))
         {
-            auto unitNode = std::make_unique<AstNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
@@ -207,7 +193,7 @@ namespace AST
         LOG_DEBUG("priority");
 
         if (current().kind == tokenKind::IDENTIFIER)
-            return std::move(primary());
+            return std::move(chain());
 
         if (!consume(tokenKind::PARENTHESIS_LEFT))
         {
@@ -228,9 +214,63 @@ namespace AST
         return std::move(node);
     }
 
+    std::unique_ptr<AstNode> Parser::chain()
+    {
+        auto node = primary();
+
+        while (hasNext())
+        {
+            if (isCurrent(tokenKind::DOT))
+            {
+                node = std::move(MakeBinaryOpNode(consume(), node, primary()));
+            }
+            else
+                break;
+        }
+
+        return std::move(node);
+    }
+
     std::unique_ptr<AstNode> Parser::primary()
     {
-        return std::move(std::make_unique<PrimaryNode>(consume()));
+        if (!isNext(tokenKind::PARENTHESIS_LEFT))
+            return std::move(std::make_unique<AstOpNode>(consume()));
+
+        auto identifier = consume();
+        return std::move(std::make_unique<CalleeNode>(identifier, std::move(args())));
+    }
+
+    std::unique_ptr<ArgsNode> Parser::args()
+    {
+        auto arguments = std::make_unique<ArgsNode>();
+
+        if (!consume(tokenKind::PARENTHESIS_LEFT))
+        {
+            std::cerr << "expected '(' but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            exit(1);
+        }
+
+        if (isCurrent(tokenKind::PARENTHESISE_RIGHT))
+            return std::move(arguments);
+
+        while (hasNext())
+        {
+            auto arg = equality();
+            arguments->push(arg);
+
+            if (!consume(tokenKind::COMMA))
+                break;
+        }
+
+        if (!consume(tokenKind::PARENTHESISE_RIGHT))
+        {
+            std::cerr << "expected ')' but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            exit(1);
+        }
+
+        return std::move(arguments);
     }
 
 }

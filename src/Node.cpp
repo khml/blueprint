@@ -10,7 +10,7 @@
 
 namespace AST
 {
-    AstNode::AstNode(const Lexer::Token& token) :token(token), objId(objIdCounter++)
+    AstNode::AstNode() :objId(objIdCounter++)
     {}
 
     AstNode::~AstNode()
@@ -18,16 +18,7 @@ namespace AST
 
 #ifdef DEBUG_GRAPH
     int AstNode::objIdCounter = 0;
-#endif
 
-#ifdef DEBUG_NODE
-    void AstNode::print()
-    {
-        std::cerr << "node: " << token.value << std::endl;
-    }
-#endif
-
-#ifdef DEBUG_GRAPH
     void AstNode::graph()
     {
         std::ostringstream dotFile;
@@ -42,30 +33,45 @@ namespace AST
 
         std::cerr << dotFile.str() << std::endl;
     }
+#endif
 
-    void AstNode::graph(std::ostringstream& dotFile)
+    AstOpNode::AstOpNode(const Lexer::Token& token) :token(token)
+    {}
+
+    AstOpNode::~AstOpNode()
+    = default;
+
+    std::string AstOpNode::value()
+    {
+        return token.value;
+    }
+
+#ifdef DEBUG_NODE
+    void AstOpNode::print()
+    {
+        std::cerr << "node: " << token.value << std::endl;
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void AstOpNode::graph(std::ostringstream& dotFile)
     {
         dotFile << "  " << objId << " [ label = \"" << token.value << "\" ]" << std::endl;
     }
 #endif
 
-    PrimaryNode::PrimaryNode(const Lexer::Token& token) :AstNode(token)
-    {}
-
-    PrimaryNode::~PrimaryNode()
-    = default;
-
-    VariableNode::VariableNode(const Lexer::Token& token) :AstNode(token)
+    VariableNode::VariableNode(const Lexer::Token& token) :AstOpNode(token)
     {}
 
     VariableNode::~VariableNode()
     = default;
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstNode(token), left(nullptr), right(nullptr)
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
     {}
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right)
-        :AstNode(token), left(std::move(left)), right(std::move(right))
+    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left,
+        std::unique_ptr<AstNode> right)
+        :AstOpNode(token), left(std::move(left)), right(std::move(right))
     {}
 
     BinaryOpNode::~BinaryOpNode()
@@ -76,9 +82,9 @@ namespace AST
     {
         std::cerr << "[BinaryOpNode] op: " << token.value;
         if (left)
-            std::cerr << ", left: " << left->token.value;
+            std::cerr << ", left: " << left->value();
         if (right)
-            std::cerr << ", right: " << right->token.value;
+            std::cerr << ", right: " << right->value();
         std::cerr << std::endl;
 
         if (left)
@@ -91,7 +97,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void BinaryOpNode::graph(std::ostringstream& dotFile)
     {
-        AstNode::graph(dotFile);
+        AstOpNode::graph(dotFile);
         if (left != nullptr)
             dotFile << "  " << objId << "->" << left->objId << std::endl;
         if (right != nullptr)
@@ -100,6 +106,87 @@ namespace AST
             left->graph(dotFile);
         if (right != nullptr)
             right->graph(dotFile);
+    }
+#endif
+
+    ArgsNode::ArgsNode()
+    = default;
+
+    ArgsNode::~ArgsNode()
+    = default;
+
+    std::string ArgsNode::value()
+    {
+        std::ostringstream oss;
+        auto length = size();
+        oss << "(";
+        for(const auto& item: args)
+        {
+            oss << item->value();
+            if (--length > 0)
+                oss << ", ";
+        }
+        oss << ")";
+        return oss.str();
+    }
+
+    void ArgsNode::push(std::unique_ptr<AstNode>& node)
+    {
+        args.emplace_back(std::move(node));
+    }
+
+    size_t ArgsNode::size()
+    {
+        return args.size();
+    }
+
+#ifdef DEBUG_NODE
+    void ArgsNode::print()
+    {
+        std::cerr << "[ArgsNode]: " << value();
+
+        std::cerr << std::endl;
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void ArgsNode::graph(std::ostringstream& dotFile)
+    {
+        dotFile << "  " << objId << " [ label = \"" << "Argument(s)" << "\" ]" << std::endl;
+        for (auto& item : args)
+            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
+        for (auto& item : args)
+            item->graph(dotFile);
+    }
+#endif
+
+    CalleeNode::CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args) :token(token),
+        args(std::move(args))
+    {}
+
+    CalleeNode::~CalleeNode()
+    = default;
+
+    std::string CalleeNode::value()
+    {
+        return token.value + args->value();
+    }
+
+#ifdef DEBUG_NODE
+    void CalleeNode::print()
+    {
+        std::cerr << "[Callee]: " + value();
+
+        std::cerr << std::endl;
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void CalleeNode::graph(std::ostringstream& dotFile)
+    {
+        dotFile << "  " << objId << " [ label = \"" << token.value << args->value() << "\" ]" << std::endl;
+        dotFile << "  " << objId << "->" << args->objId << std::endl;
+        args->graph(dotFile);
     }
 #endif
 }

@@ -59,7 +59,11 @@ namespace AST
 
         std::unique_ptr<AstNode> priority();
 
+        std::unique_ptr<AstNode> chain();
+
         std::unique_ptr<AstNode> primary();
+
+        std::unique_ptr<ArgsNode> args();
     };
 }
 
