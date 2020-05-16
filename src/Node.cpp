@@ -143,7 +143,7 @@ namespace AST
 #ifdef DEBUG_NODE
     void ArgsNode::print()
     {
-        std::cerr << "[ArgsNode]";
+        std::cerr << "[ArgsNode]: " << value();
 
         std::cerr << std::endl;
     }
@@ -152,8 +152,9 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void ArgsNode::graph(std::ostringstream& dotFile)
     {
+        dotFile << "  " << objId << " [ label = \"" << "Argument(s)" << "\" ]" << std::endl;
         for (auto& item : args)
-            dotFile << "  " << objId << "->" << item->objId << std::endl;;
+            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
         for (auto& item : args)
             item->graph(dotFile);
     }
