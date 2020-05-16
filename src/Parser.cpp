@@ -259,8 +259,33 @@ namespace AST
     std::unique_ptr<ArgsNode> Parser::args()
     {
         auto arguments = std::make_unique<ArgsNode>();
-        auto arg =  std::move(equality());
-        arguments->push(arg);
+
+        if (!consume(tokenKind::PARENTHESIS_LEFT))
+        {
+            std::cerr << "expected '(' but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            exit(1);
+        }
+
+        if (isCurrent(tokenKind::PARENTHESISE_RIGHT))
+            return std::move(arguments);
+
+        while (hasNext())
+        {
+            auto arg = equality();
+            arguments->push(arg);
+
+            if (!consume(tokenKind::COMMA))
+                break;
+        }
+
+        if (!consume(tokenKind::PARENTHESISE_RIGHT))
+        {
+            std::cerr << "expected ')' but given token-kind=" <<
+                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            exit(1);
+        }
+
         return std::move(arguments);
     }
 
