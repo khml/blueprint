@@ -117,7 +117,17 @@ namespace AST
 
     std::string ArgsNode::value()
     {
-        return "Args";
+        std::ostringstream oss;
+        auto length = size();
+        oss << "(";
+        for(const auto& item: args)
+        {
+            oss << item->value();
+            if (--length > 0)
+                oss << ", ";
+        }
+        oss << ")";
+        return oss.str();
     }
 
     void ArgsNode::push(std::unique_ptr<AstNode>& node)
