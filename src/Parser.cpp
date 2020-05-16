@@ -249,7 +249,7 @@ namespace AST
 
     std::unique_ptr<AstNode> Parser::primary()
     {
-        if(!isNext(tokenKind::PARENTHESIS_LEFT))
+        if (!isNext(tokenKind::PARENTHESIS_LEFT))
             return std::move(std::make_unique<AstOpNode>(consume()));
 
         auto identifier = consume();
