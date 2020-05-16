@@ -87,9 +87,7 @@ namespace AST
         if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
         {
             std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
-            auto equalToken = consume();
-            auto right = equality();
-            return std::move(MakeBinaryOpNode(equalToken, variableNode, right));
+            return std::move(MakeBinaryOpNode(consume(), variableNode, equality()));
         }
 
         return nullptr;
@@ -105,9 +103,7 @@ namespace AST
         {
             if (isCurrent(tokenKind::AND) || isCurrent(tokenKind::OR))
             {
-                auto logicalOpToken = consume();
-                auto right = relation();
-                node = MakeBinaryOpNode(logicalOpToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, relation());
             }
             else
                 break;
@@ -119,12 +115,6 @@ namespace AST
     {
         LOG_DEBUG("relation");
 
-        static auto makeNode = [this](Lexer::Token&& logicalOpToken, std::unique_ptr<AstNode>& left,
-            std::unique_ptr<AstNode>&& right) -> std::unique_ptr<AstNode>
-        {
-            return std::move(MakeBinaryOpNode(logicalOpToken, left, right));
-        };
-
         auto node = addition();
         while (hasNext())
         {
@@ -135,7 +125,7 @@ namespace AST
                 case tokenKind::EQUIVALENCE:
                 case tokenKind::GRATER:
                 case tokenKind::LESSER:
-                    node = makeNode(consume(), node, addition());
+                    node = MakeBinaryOpNode(consume(), node, addition());
                     break;
                 default:
                     return std::move(node);
@@ -154,9 +144,7 @@ namespace AST
         {
             if (isCurrent(tokenKind::ADD) || isCurrent(tokenKind::SUB))
             {
-                auto additionToken = consume();
-                auto right = mul();
-                node = MakeBinaryOpNode(additionToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, mul());
             }
             else
                 break;
@@ -174,9 +162,7 @@ namespace AST
             if (isCurrent(tokenKind::ASTERISK) || isCurrent(tokenKind::SLASH) ||
                 isCurrent(tokenKind::PERCENT))
             {
-                auto mulToken = consume();
-                auto right = unary();
-                node = MakeBinaryOpNode(mulToken, node, right);
+                node = MakeBinaryOpNode(consume(), node, unary());
             }
             else
                 break;
@@ -236,9 +222,7 @@ namespace AST
         {
             if (isCurrent(tokenKind::DOT))
             {
-                auto dot = consume();
-                auto next = primary();
-                node = std::move(MakeBinaryOpNode(dot, node, next));
+                node = std::move(MakeBinaryOpNode(consume(), node, primary()));
             }
             else
                 break;
