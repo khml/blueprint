@@ -117,7 +117,17 @@ namespace AST
 
     std::string ArgsNode::value()
     {
-        return "Args";
+        std::ostringstream oss;
+        auto length = size();
+        oss << "(";
+        for(const auto& item: args)
+        {
+            oss << item->value();
+            if (--length > 0)
+                oss << ", ";
+        }
+        oss << ")";
+        return oss.str();
     }
 
     void ArgsNode::push(std::unique_ptr<AstNode>& node)
@@ -133,7 +143,7 @@ namespace AST
 #ifdef DEBUG_NODE
     void ArgsNode::print()
     {
-        std::cerr << "[ArgsNode]";
+        std::cerr << "[ArgsNode]: " << value();
 
         std::cerr << std::endl;
     }
@@ -142,8 +152,9 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void ArgsNode::graph(std::ostringstream& dotFile)
     {
+        dotFile << "  " << objId << " [ label = \"" << "Argument(s)" << "\" ]" << std::endl;
         for (auto& item : args)
-            dotFile << "  " << objId << "->" << item->objId << std::endl;;
+            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
         for (auto& item : args)
             item->graph(dotFile);
     }
@@ -158,13 +169,13 @@ namespace AST
 
     std::string CalleeNode::value()
     {
-        return "Callee: " + token.value + " : " + args->value();
+        return token.value + args->value();
     }
 
 #ifdef DEBUG_NODE
     void CalleeNode::print()
     {
-        std::cerr << "[Callee]";
+        std::cerr << "[Callee]: " + value();
 
         std::cerr << std::endl;
     }
@@ -173,7 +184,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void CalleeNode::graph(std::ostringstream& dotFile)
     {
-        dotFile << "  " << objId << " [ label = \"" << token.value << " Callee " << "\" ]" << std::endl;
+        dotFile << "  " << objId << " [ label = \"" << token.value << args->value() << "\" ]" << std::endl;
         dotFile << "  " << objId << "->" << args->objId << std::endl;
         args->graph(dotFile);
     }
