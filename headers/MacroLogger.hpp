@@ -43,4 +43,7 @@
 #define LOG_ERROR(value)
 #endif
 
+#define STD_LOG(value) std::cout << value << std::endl
+#define STD_ERR_LOG(value) std::cerr << value << std::endl
+
 #endif //BLUEPRINT_MACROLOGGER_HPP
