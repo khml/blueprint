@@ -9,7 +9,7 @@ using std::cerr;
 using std::endl;
 using std::cin;
 
-int main()
+void read_print_loop()
 {
     string line;
 
@@ -34,6 +34,10 @@ int main()
         node->graph();
 #endif
     }
+}
 
+int main()
+{
+    read_print_loop();
     return 0;
 }
