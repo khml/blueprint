@@ -1,8 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 
 #include "Tokenizer.hpp"
 #include "Parser.hpp"
+#include "MacroLogger.hpp"
 
 using std::string;
 using std::cerr;
@@ -36,8 +38,36 @@ void read_print_loop()
     }
 }
 
-int main()
+void read_file_and_print(const string& filename)
 {
-    read_print_loop();
+    STD_ERR_LOG("filename:" << filename);
+    std::ifstream file(filename);
+    if (file.fail())
+    {
+        STD_ERR_LOG("Failed to open file : " << filename);
+        return;
+    }
+
+    string line;
+    Lexer::Tokenizer tokenizer;
+    while (getline(file, line))
+    {
+        STD_ERR_LOG("line: " << line);
+        auto tokens = tokenizer.tokenize(line);
+        Lexer::printTokens(tokens);
+        STD_ERR_LOG("");
+    }
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc == 0)
+        read_print_loop();
+    else
+    {
+        string filename = argv[1];
+        read_file_and_print(filename);
+    }
+
     return 0;
 }
