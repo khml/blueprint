@@ -36,7 +36,6 @@ TokenKind = OrderedDict([
     ('UNDER_BAR', '_'),
     ('BACKSLASH', '\\\\'),
     ('WHITESPACE', ' '),
-    ('NEW_LINE', '\\n'),
     ("EQUIVALENCE", "=="),
     ("GRATER", ">="),
     ("LESSER", "<="),
