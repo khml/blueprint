@@ -22,7 +22,7 @@ namespace AST
 
         virtual ~AstNode();
 
-        virtual std::string value() = 0;
+        virtual std::string str() = 0;
 
 #ifdef DEBUG_NODE
 
@@ -53,7 +53,7 @@ namespace AST
 
         ~AstOpNode() override;
 
-        std::string value() override;
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 
@@ -113,7 +113,7 @@ namespace AST
 
         ~ArgsNode() override;
 
-        std::string value() override;
+        std::string str() override;
 
         void push(std::unique_ptr<AstNode>& node);
 
@@ -141,7 +141,7 @@ namespace AST
 
         ~CalleeNode() override;
 
-        std::string value() override;
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 

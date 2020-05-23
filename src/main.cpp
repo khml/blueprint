@@ -50,11 +50,19 @@ void read_file_and_print(const string& filename)
 
     string line;
     Lexer::Tokenizer tokenizer;
+    auto parser = AST::Parser();
     while (getline(file, line))
     {
         STD_ERR_LOG("line: " << line);
         auto tokens = tokenizer.tokenize(line);
         Lexer::printTokens(tokens);
+        auto node = parser.parse(tokens);
+#ifdef DEBUG_NODE
+        node->print();
+#endif
+#ifdef DEBUG_GRAPH
+        node->graph();
+#endif
         STD_ERR_LOG("");
     }
 }
