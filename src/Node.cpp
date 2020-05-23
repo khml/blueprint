@@ -41,7 +41,7 @@ namespace AST
     AstOpNode::~AstOpNode()
     = default;
 
-    std::string AstOpNode::value()
+    std::string AstOpNode::str()
     {
         return token.value;
     }
@@ -82,9 +82,9 @@ namespace AST
     {
         std::cerr << "[BinaryOpNode] op: " << token.value;
         if (left)
-            std::cerr << ", left: " << left->value();
+            std::cerr << ", left: " << left->str();
         if (right)
-            std::cerr << ", right: " << right->value();
+            std::cerr << ", right: " << right->str();
         std::cerr << std::endl;
 
         if (left)
@@ -115,14 +115,14 @@ namespace AST
     ArgsNode::~ArgsNode()
     = default;
 
-    std::string ArgsNode::value()
+    std::string ArgsNode::str()
     {
         std::ostringstream oss;
         auto length = size();
         oss << "(";
         for(const auto& item: args)
         {
-            oss << item->value();
+            oss << item->str();
             if (--length > 0)
                 oss << ", ";
         }
@@ -143,7 +143,7 @@ namespace AST
 #ifdef DEBUG_NODE
     void ArgsNode::print()
     {
-        std::cerr << "[ArgsNode]: " << value();
+        std::cerr << "[ArgsNode]: " << str();
 
         std::cerr << std::endl;
     }
@@ -167,15 +167,15 @@ namespace AST
     CalleeNode::~CalleeNode()
     = default;
 
-    std::string CalleeNode::value()
+    std::string CalleeNode::str()
     {
-        return token.value + args->value();
+        return token.value + args->str();
     }
 
 #ifdef DEBUG_NODE
     void CalleeNode::print()
     {
-        std::cerr << "[Callee]: " + value();
+        std::cerr << "[Callee]: " + str();
 
         std::cerr << std::endl;
     }
@@ -184,7 +184,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void CalleeNode::graph(std::ostringstream& dotFile)
     {
-        dotFile << "  " << objId << " [ label = \"" << token.value << args->value() << "\" ]" << std::endl;
+        dotFile << "  " << objId << " [ label = \"" << token.value << args->str() << "\" ]" << std::endl;
         dotFile << "  " << objId << "->" << args->objId << std::endl;
         args->graph(dotFile);
     }
