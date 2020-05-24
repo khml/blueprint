@@ -21,6 +21,7 @@ namespace AST
 
     std::unique_ptr<AstNode> Parser::parse(std::vector<Lexer::Token> tokenList)
     {
+        tokenHead = 0;
         tokens.clear();
         tokens.swap(tokenList);
         return std::move(expression());
