@@ -238,12 +238,13 @@ namespace AST
             return std::move(std::make_unique<AstOpNode>(consume()));
 
         auto identifier = consume();
-        return std::move(std::make_unique<CalleeNode>(identifier, std::move(args())));
+        auto arguments = args();
+        return std::move(std::make_unique<CalleeNode>(identifier, arguments));
     }
 
-    std::unique_ptr<ArgsNode> Parser::args()
+    std::vector<std::unique_ptr<AstNode>> Parser::args()
     {
-        auto arguments = std::make_unique<ArgsNode>();
+        std::vector<std::unique_ptr<AstNode>> arguments;
 
         if (!consume(tokenKind::PARENTHESIS_LEFT))
         {
@@ -258,7 +259,7 @@ namespace AST
         while (hasNext())
         {
             auto arg = equality();
-            arguments->push(arg);
+            arguments.emplace_back(std::move(arg));
 
             if (!consume(tokenKind::COMMA))
                 break;

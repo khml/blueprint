@@ -63,7 +63,7 @@ namespace AST
 
         std::unique_ptr<AstNode> primary();
 
-        std::unique_ptr<ArgsNode> args();
+        std::vector<std::unique_ptr<AstNode>> args();
     };
 }
 
