@@ -120,7 +120,7 @@ namespace AST
         std::ostringstream oss;
         auto length = size();
         oss << "(";
-        for(const auto& item: args)
+        for (const auto& item: args)
         {
             oss << item->str();
             if (--length > 0)
@@ -160,7 +160,7 @@ namespace AST
     }
 #endif
 
-    CalleeNode::CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args) :token(token),
+    CalleeNode::CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args) :token(token),
         args(std::move(args))
     {}
 
@@ -169,7 +169,22 @@ namespace AST
 
     std::string CalleeNode::str()
     {
-        return token.value + args->str();
+        return token.value + args_str();
+    }
+
+    std::string CalleeNode::args_str()
+    {
+        std::ostringstream oss;
+        auto length = args.size();
+        oss << "(";
+        for (const auto& item: args)
+        {
+            oss << item->str();
+            if (--length > 0)
+                oss << ", ";
+        }
+        oss << ")";
+        return oss.str();
     }
 
 #ifdef DEBUG_NODE
@@ -184,9 +199,11 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void CalleeNode::graph(std::ostringstream& dotFile)
     {
-        dotFile << "  " << objId << " [ label = \"" << token.value << args->str() << "\" ]" << std::endl;
-        dotFile << "  " << objId << "->" << args->objId << std::endl;
-        args->graph(dotFile);
+        dotFile << "  " << objId << " [ label = \"" << str() << "\" ]" << std::endl;
+        for (auto& item : args)
+            item->graph(dotFile);
+        for (auto& item : args)
+            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
     }
 #endif
 }

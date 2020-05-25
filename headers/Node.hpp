@@ -137,7 +137,7 @@ namespace AST
     class CalleeNode : public AstNode
     {
     public:
-        CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args);
+        CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args);
 
         ~CalleeNode() override;
 
@@ -157,7 +157,9 @@ namespace AST
 
     protected:
         const Lexer::Token token;
-        const std::unique_ptr<ArgsNode> args;
+        const std::vector<std::unique_ptr<AstNode>> args;
+
+        std::string args_str();
     };
 
 }
