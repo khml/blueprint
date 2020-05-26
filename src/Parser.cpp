@@ -8,7 +8,7 @@
 #include "MacroLogger.hpp"
 #include "Parser.hpp"
 
-#define MakeBinaryOpNode(token, left, right) std::make_unique<BinaryOpNode>(token, std::move(left), std::move(right))
+#define MakeBinaryOpNode(token, left, right) std::make_unique<BinaryOpNode>((token), (std::move(left)), (std::move(right)))
 
 namespace AST
 {
