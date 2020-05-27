@@ -22,8 +22,8 @@ priority = chain | “(“ equality “)”
 
 chain = primary ( “.” primary )*
 
-primary = identifier ( “(“ ( args ) “)” )
+primary = identifier ( args )
 
-args = equality ( “,” equality )*
+args = "(" ( equality ( “,” equality )* ) ")"
 
 identifier = [_a-zA-Z][_a-zA-Z0-9]? | [0-9] ( "." [0-9]+ ) ( "f" )
