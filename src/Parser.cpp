@@ -238,20 +238,24 @@ namespace AST
             return std::move(std::make_unique<AstOpNode>(consume()));
 
         auto identifier = consume();
-        auto arguments = args();
+        auto arguments = tuple();
         return std::move(std::make_unique<CalleeNode>(identifier, arguments));
     }
 
-    std::vector<std::unique_ptr<AstNode>> Parser::args()
+    std::vector<std::unique_ptr<AstNode>> Parser::tuple(const tokenKind::Kind delimiter, const tokenKind::Kind left,
+        const tokenKind::Kind right)
     {
         std::vector<std::unique_ptr<AstNode>> arguments;
 
-        if (!consume(tokenKind::PARENTHESIS_LEFT))
+        auto expect = [this](const tokenKind::Kind& expectedToken)
         {
-            std::cerr << "expected '(' but given token-kind=" <<
+            std::cerr << "expected '" << tokenKind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
                       tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
-        }
+        };
+
+        if (!consume(left))
+            expect(left);
 
         if (isCurrent(tokenKind::PARENTHESISE_RIGHT))
             return std::move(arguments);
@@ -261,16 +265,12 @@ namespace AST
             auto arg = equality();
             arguments.emplace_back(std::move(arg));
 
-            if (!consume(tokenKind::COMMA))
+            if (!consume(delimiter))
                 break;
         }
 
-        if (!consume(tokenKind::PARENTHESISE_RIGHT))
-        {
-            std::cerr << "expected ')' but given token-kind=" <<
-                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
-            exit(1);
-        }
+        if (!consume(right))
+            expect(right);
 
         return std::move(arguments);
     }
