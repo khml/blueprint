@@ -106,34 +106,6 @@ namespace AST
 #endif
     };
 
-    class ArgsNode : public AstNode
-    {
-    public:
-        ArgsNode();
-
-        ~ArgsNode() override;
-
-        std::string str() override;
-
-        void push(std::unique_ptr<AstNode>& node);
-
-        size_t size();
-
-        std::vector<std::unique_ptr<AstNode>> args;
-
-#ifdef DEBUG_NODE
-
-        void print() override;
-
-#endif
-
-#ifdef DEBUG_GRAPH
-
-        void graph(std::ostringstream& dotFile) override;
-
-#endif
-    };
-
     class CalleeNode : public AstNode
     {
     public:

@@ -109,57 +109,6 @@ namespace AST
     }
 #endif
 
-    ArgsNode::ArgsNode()
-    = default;
-
-    ArgsNode::~ArgsNode()
-    = default;
-
-    std::string ArgsNode::str()
-    {
-        std::ostringstream oss;
-        auto length = size();
-        oss << "(";
-        for (const auto& item: args)
-        {
-            oss << item->str();
-            if (--length > 0)
-                oss << ", ";
-        }
-        oss << ")";
-        return oss.str();
-    }
-
-    void ArgsNode::push(std::unique_ptr<AstNode>& node)
-    {
-        args.emplace_back(std::move(node));
-    }
-
-    size_t ArgsNode::size()
-    {
-        return args.size();
-    }
-
-#ifdef DEBUG_NODE
-    void ArgsNode::print()
-    {
-        std::cerr << "[ArgsNode]: " << str();
-
-        std::cerr << std::endl;
-    }
-#endif
-
-#ifdef DEBUG_GRAPH
-    void ArgsNode::graph(std::ostringstream& dotFile)
-    {
-        dotFile << "  " << objId << " [ label = \"" << "Argument(s)" << "\" ]" << std::endl;
-        for (auto& item : args)
-            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
-        for (auto& item : args)
-            item->graph(dotFile);
-    }
-#endif
-
     CalleeNode::CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args) :token(token),
         args(std::move(args))
     {}
