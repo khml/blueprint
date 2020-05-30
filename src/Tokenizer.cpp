@@ -82,7 +82,13 @@ namespace Lexer
         int start = indicator++;
         for (; indicator < lineData.size(); indicator++)
         {
-            if (lineData.substr(indicator, 1) == mark)
+            auto ch = lineData.substr(indicator, 1);
+            if (ch == "\\")
+            {
+                indicator++;
+                continue;
+            }
+            if (ch == mark)
             {
                 auto str = lineData.substr(start + 1, (indicator - start - 1));
                 pushToken(tokenKind::IDENTIFIER, str, true);

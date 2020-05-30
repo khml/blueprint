@@ -22,7 +22,7 @@ namespace AST
 
         virtual ~AstNode();
 
-        virtual std::string value() = 0;
+        virtual std::string str() = 0;
 
 #ifdef DEBUG_NODE
 
@@ -53,7 +53,7 @@ namespace AST
 
         ~AstOpNode() override;
 
-        std::string value() override;
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 
@@ -106,42 +106,14 @@ namespace AST
 #endif
     };
 
-    class ArgsNode : public AstNode
-    {
-    public:
-        ArgsNode();
-
-        ~ArgsNode() override;
-
-        std::string value() override;
-
-        void push(std::unique_ptr<AstNode>& node);
-
-        size_t size();
-
-        std::vector<std::unique_ptr<AstNode>> args;
-
-#ifdef DEBUG_NODE
-
-        void print() override;
-
-#endif
-
-#ifdef DEBUG_GRAPH
-
-        void graph(std::ostringstream& dotFile) override;
-
-#endif
-    };
-
     class CalleeNode : public AstNode
     {
     public:
-        CalleeNode(const Lexer::Token& token, std::unique_ptr<ArgsNode> args);
+        CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args);
 
         ~CalleeNode() override;
 
-        std::string value() override;
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 
@@ -157,7 +129,9 @@ namespace AST
 
     protected:
         const Lexer::Token token;
-        const std::unique_ptr<ArgsNode> args;
+        const std::vector<std::unique_ptr<AstNode>> args;
+
+        std::string args_str();
     };
 
 }

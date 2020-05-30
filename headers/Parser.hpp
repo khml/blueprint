@@ -63,7 +63,9 @@ namespace AST
 
         std::unique_ptr<AstNode> primary();
 
-        std::unique_ptr<ArgsNode> args();
+        std::vector<std::unique_ptr<AstNode>>
+        tuple(tokenKind::Kind delimiter = tokenKind::COMMA, tokenKind::Kind left = tokenKind::PARENTHESIS_LEFT,
+            tokenKind::Kind right = tokenKind::PARENTHESISE_RIGHT);
     };
 }
 
