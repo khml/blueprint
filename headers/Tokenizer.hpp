@@ -6,7 +6,6 @@
 #define BLUEPRINT_TOKENIZER_HPP
 
 #include <string>
-#include <sstream>
 #include <vector>
 
 #include "TokenKind.hpp"
