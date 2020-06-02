@@ -1,7 +1,7 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 
+#include "FileReader.hpp"
 #include "Tokenizer.hpp"
 #include "Parser.hpp"
 #include "MacroLogger.hpp"
@@ -41,17 +41,12 @@ void read_print_loop()
 void read_file_and_print(const string& filename)
 {
     STD_ERR_LOG("filename:" << filename);
-    std::ifstream file(filename);
-    if (file.fail())
-    {
-        STD_ERR_LOG("Failed to open file : " << filename);
-        return;
-    }
 
-    string line;
+    io::FileReader file(filename);
     Lexer::Tokenizer tokenizer;
     auto parser = AST::Parser();
-    while (getline(file, line))
+
+    for(auto& line : file.lines())
     {
         STD_ERR_LOG("line: " << line);
         auto tokens = tokenizer.tokenize(line);
