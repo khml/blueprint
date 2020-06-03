@@ -15,6 +15,8 @@ namespace io
     public:
         explicit FileReader(const std::string& filename);
 
+        FileReader(const FileReader& orig);
+
         virtual ~FileReader();
 
         std::vector<std::string> lines();

@@ -18,25 +18,13 @@ namespace io
         if (file.fail())
             throw std::runtime_error("Failed to open file : " + filename);
 
-        bool continuation = false;
         std::string line;
         while (getline(file, line))
-        {
-            bool is_last_backslash = line.back() == '\\';
-            line = is_last_backslash ? line.substr(0, line.size() - 1) : line;
-
-            if (continuation)
-                _lines[_lines.size() - 1] = _lines.back() + line;
-            else
-                _lines.emplace_back(line);
-
-            continuation = is_last_backslash;
-        }
-
-        if (continuation)
-            throw std::runtime_error("Last character is a backslash, expect next line");
-
+            _lines.emplace_back(line);
     }
+
+    FileReader::FileReader(const io::FileReader& orig): filename(orig.filename), _lines(orig._lines)
+    {}
 
     FileReader::~FileReader()
     = default;
