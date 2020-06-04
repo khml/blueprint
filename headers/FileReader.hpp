@@ -10,6 +10,8 @@
 
 namespace io
 {
+    std::vector<std::string> readFile(const std::string& filename);
+
     class FileReader
     {
     public:
