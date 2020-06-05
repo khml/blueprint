@@ -6,7 +6,6 @@
 #define BLUEPRINT_TOKENIZER_HPP
 
 #include <string>
-#include <sstream>
 #include <vector>
 
 #include "TokenKind.hpp"
@@ -23,6 +22,12 @@ namespace Lexer
 
         Token(tokenKind::Kind kind, tokenType::Type type);
 
+        Token(tokenKind::Kind kind, std::string value, std::string filename, uint16_t row);
+
+        Token(tokenKind::Kind kind, std::string value, tokenType::Type type, std::string filename, uint16_t row);
+
+        Token(tokenKind::Kind kind, tokenType::Type type, std::string filename, uint16_t row);
+
         Token(const Token& orig);
 
         virtual ~Token();
@@ -30,6 +35,8 @@ namespace Lexer
         const tokenKind::Kind kind;
         const tokenType::Type type;
         const std::string value;
+        const std::string filename;
+        const uint16_t row;
 
         void print();
     };
