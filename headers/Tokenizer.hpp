@@ -12,6 +12,8 @@
 
 namespace Lexer
 {
+    void printTokens(const std::vector<Token>& tokens);
+
     class Tokenizer
     {
     public:
@@ -36,8 +38,6 @@ namespace Lexer
 
         void readIdentifier();
     };
-
-    void printTokens(std::vector<Token>& tokens);
 }
 
 #endif //BLUEPRINT_TOKENIZER_HPP
