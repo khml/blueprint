@@ -9,6 +9,12 @@
 
 namespace Lexer
 {
+    void printTokens(const std::vector<Token>& tokens)
+    {
+        for (auto token : tokens)
+            token.print();
+    }
+
     Tokenizer::Tokenizer()
     = default;
 
