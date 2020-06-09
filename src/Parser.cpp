@@ -175,11 +175,11 @@ namespace AST
     {
         LOG_DEBUG("unary");
 
-        static auto productToken = Lexer::Token(tokenKind::ASTERISK, "*", tokenType::OPERATOR);
+        static auto productToken = Lexer::Token(tokenKind::ASTERISK, "*", token::type::OPERATOR);
 
         if (consume(tokenKind::SUB))
         {
-            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", tokenType::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }

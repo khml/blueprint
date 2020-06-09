@@ -24,7 +24,7 @@ namespace Lexer
     void Tokenizer::pushToken(tokenKind::Kind kindVal, const std::string& value, bool isString)
     {
         if (isString)
-            tokens.emplace_back(Token(kindVal, value, tokenType::STRING));
+            tokens.emplace_back(Token(kindVal, value, token::type::STRING));
         else
         {
             if (kindVal == tokenKind::IDENTIFIER)
@@ -114,7 +114,7 @@ namespace Lexer
                     break;
                 isDotAppeared = true;
             }
-            else if (tokenType::isDigit(ch))
+            else if (token::type::isDigit(ch))
                 continue;
             else if (ch == "f")
             {
@@ -151,7 +151,7 @@ namespace Lexer
                  * else, tokenize stored strings, and put the token.
                  */
                 case tokenKind::IDENTIFIER:
-                    if (tokenType::isDigit(ch))
+                    if (token::type::isDigit(ch))
                         readNumber();
                     else
                         readIdentifier();

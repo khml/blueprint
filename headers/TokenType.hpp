@@ -7,28 +7,33 @@
 
 #include <string>
 
-namespace tokenType
+namespace token
 {
-    enum Type
+    namespace type
     {
-    INTEGER,
-    FLOAT,
-    DOUBLE,
-    STRING,
-    IDENTIFIER,
-    OPERATOR,
-    };
+        enum Type
+        {
+        INTEGER,
+        FLOAT,
+        DOUBLE,
+        STRING,
+        IDENTIFIER,
+        OPERATOR,
+        };
 
-    bool isDigit(const std::string& str);
+        bool isDigit(const std::string& str);
 
-    bool isFloat(const std::string& str);
+        bool isFloat(const std::string& str);
 
-    bool isDouble(const std::string& str);
+        bool isDouble(const std::string& str);
 
-    bool isIdentifier(const std::string& str);
+        bool isIdentifier(const std::string& str);
 
-    Type toType(const std::string& str);
+        Type toType(const std::string& str);
 
-    std::string fromTokenType(Type val);
+        std::string fromTokenType(Type val);
+    }
+
 }
+
 #endif //BLUEPRINT_TOKENTYPE_HPP
