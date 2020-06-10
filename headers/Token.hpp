@@ -13,23 +13,23 @@ namespace Lexer
     class Token
     {
     public:
-        Token(tokenKind::Kind kind, const std::string& value);
+        Token(token::kind::Kind kind, const std::string& value);
 
-        Token(tokenKind::Kind kind, std::string value, token::type::Type type);
+        Token(token::kind::Kind kind, std::string value, token::type::Type type);
 
-        Token(tokenKind::Kind kind, token::type::Type type);
+        Token(token::kind::Kind kind, token::type::Type type);
 
-        Token(tokenKind::Kind kind, std::string value, std::string filename, uint16_t row);
+        Token(token::kind::Kind kind, std::string value, std::string filename, uint16_t row);
 
-        Token(tokenKind::Kind kind, std::string value, token::type::Type type, std::string filename, uint16_t row);
+        Token(token::kind::Kind kind, std::string value, token::type::Type type, std::string filename, uint16_t row);
 
-        Token(tokenKind::Kind kind, token::type::Type type, std::string filename, uint16_t row);
+        Token(token::kind::Kind kind, token::type::Type type, std::string filename, uint16_t row);
 
         Token(const Token& orig);
 
         virtual ~Token();
 
-        const tokenKind::Kind kind;
+        const token::kind::Kind kind;
         const token::type::Type type;
         const std::string value;
         const std::string filename;

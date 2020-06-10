@@ -28,9 +28,9 @@ namespace Lexer
         std::vector<Token> tokens;
         int indicator = 0;
 
-        void pushToken(tokenKind::Kind kindVal, const std::string& value, bool isString = false);
+        void pushToken(token::kind::Kind kindVal, const std::string& value, bool isString = false);
 
-        void readMultiCharOperator(tokenKind::Kind kind, const std::string& ch, int size);
+        void readMultiCharOperator(token::kind::Kind kind, const std::string& ch, int size);
 
         void readString(const std::string& mark);
 

@@ -37,7 +37,7 @@ namespace AST
         return tokens[tokenHead];
     }
 
-    bool Parser::isCurrent(tokenKind::Kind kind)
+    bool Parser::isCurrent(token::kind::Kind kind)
     {
         return tokens[tokenHead].kind == kind;
     }
@@ -47,7 +47,7 @@ namespace AST
         return tokens[tokenHead++];
     }
 
-    bool Parser::consume(tokenKind::Kind expected)
+    bool Parser::consume(token::kind::Kind expected)
     {
         bool isCurrentExpected = isCurrent(expected);
         if (isCurrentExpected)
@@ -60,7 +60,7 @@ namespace AST
         return tokens[++tokenHead];
     }
 
-    bool Parser::isNext(tokenKind::Kind kind)
+    bool Parser::isNext(token::kind::Kind kind)
     {
         return tokens[tokenHead + 1].kind == kind;
     }
@@ -85,7 +85,7 @@ namespace AST
     {
         LOG_DEBUG("assignment");
 
-        if (isCurrent(tokenKind::IDENTIFIER) && hasNext() && isNext(tokenKind::EQUAL))
+        if (isCurrent(token::kind::IDENTIFIER) && hasNext() && isNext(token::kind::EQUAL))
         {
             std::unique_ptr<AstNode> variableNode = std::make_unique<VariableNode>(consume());
             return std::move(MakeBinaryOpNode(consume(), variableNode, equality()));
@@ -102,7 +102,7 @@ namespace AST
 
         while (hasNext())
         {
-            if (isCurrent(tokenKind::AND) || isCurrent(tokenKind::OR))
+            if (isCurrent(token::kind::AND) || isCurrent(token::kind::OR))
             {
                 node = MakeBinaryOpNode(consume(), node, relation());
             }
@@ -121,11 +121,11 @@ namespace AST
         {
             switch (current().kind)
             {
-                case tokenKind::GRATER_THAN:
-                case tokenKind::LESSER_THAN:
-                case tokenKind::EQUIVALENCE:
-                case tokenKind::GRATER:
-                case tokenKind::LESSER:
+                case token::kind::GRATER_THAN:
+                case token::kind::LESSER_THAN:
+                case token::kind::EQUIVALENCE:
+                case token::kind::GRATER:
+                case token::kind::LESSER:
                     node = MakeBinaryOpNode(consume(), node, addition());
                     break;
                 default:
@@ -143,7 +143,7 @@ namespace AST
 
         while (hasNext())
         {
-            if (isCurrent(tokenKind::ADD) || isCurrent(tokenKind::SUB))
+            if (isCurrent(token::kind::ADD) || isCurrent(token::kind::SUB))
             {
                 node = MakeBinaryOpNode(consume(), node, mul());
             }
@@ -160,8 +160,8 @@ namespace AST
         auto node = unary();
         while (hasNext())
         {
-            if (isCurrent(tokenKind::ASTERISK) || isCurrent(tokenKind::SLASH) ||
-                isCurrent(tokenKind::PERCENT))
+            if (isCurrent(token::kind::ASTERISK) || isCurrent(token::kind::SLASH) ||
+                isCurrent(token::kind::PERCENT))
             {
                 node = MakeBinaryOpNode(consume(), node, unary());
             }
@@ -175,16 +175,16 @@ namespace AST
     {
         LOG_DEBUG("unary");
 
-        static auto productToken = Lexer::Token(tokenKind::ASTERISK, "*", token::type::OPERATOR);
+        static auto productToken = Lexer::Token(token::kind::ASTERISK, "*", token::type::OPERATOR);
 
-        if (consume(tokenKind::SUB))
+        if (consume(token::kind::SUB))
         {
-            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(tokenKind::IDENTIFIER, "-1", token::type::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
 
-        consume(tokenKind::ADD);
+        consume(token::kind::ADD);
 
         return std::move(priority());
     }
@@ -193,22 +193,22 @@ namespace AST
     {
         LOG_DEBUG("priority");
 
-        if (current().kind == tokenKind::IDENTIFIER)
+        if (current().kind == token::kind::IDENTIFIER)
             return std::move(chain());
 
-        if (!consume(tokenKind::PARENTHESIS_LEFT))
+        if (!consume(token::kind::PARENTHESIS_LEFT))
         {
             std::cerr << "expected '(' but given token-kind=" <<
-                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         }
 
         std::unique_ptr<AstNode> node = equality();
 
-        if (!consume(tokenKind::PARENTHESISE_RIGHT))
+        if (!consume(token::kind::PARENTHESISE_RIGHT))
         {
             std::cerr << "expected ')' but given token-kind=" <<
-                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         }
 
@@ -221,7 +221,7 @@ namespace AST
 
         while (hasNext())
         {
-            if (isCurrent(tokenKind::DOT))
+            if (isCurrent(token::kind::DOT))
             {
                 node = std::move(MakeBinaryOpNode(consume(), node, primary()));
             }
@@ -234,7 +234,7 @@ namespace AST
 
     std::unique_ptr<AstNode> Parser::primary()
     {
-        if (!isNext(tokenKind::PARENTHESIS_LEFT))
+        if (!isNext(token::kind::PARENTHESIS_LEFT))
             return std::move(std::make_unique<AstOpNode>(consume()));
 
         auto identifier = consume();
@@ -242,22 +242,22 @@ namespace AST
         return std::move(std::make_unique<CalleeNode>(identifier, arguments));
     }
 
-    std::vector<std::unique_ptr<AstNode>> Parser::tuple(const tokenKind::Kind delimiter, const tokenKind::Kind left,
-        const tokenKind::Kind right)
+    std::vector<std::unique_ptr<AstNode>> Parser::tuple(const token::kind::Kind delimiter, const token::kind::Kind left,
+        const token::kind::Kind right)
     {
         std::vector<std::unique_ptr<AstNode>> arguments;
 
-        auto expect = [this](const tokenKind::Kind& expectedToken)
+        auto expect = [this](const token::kind::Kind& expectedToken)
         {
-            std::cerr << "expected '" << tokenKind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
-                      tokenKind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+            std::cerr << "expected '" << token::kind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
+                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
             exit(1);
         };
 
         if (!consume(left))
             expect(left);
 
-        if (isCurrent(tokenKind::PARENTHESISE_RIGHT))
+        if (isCurrent(token::kind::PARENTHESISE_RIGHT))
             return std::move(arguments);
 
         while (hasNext())

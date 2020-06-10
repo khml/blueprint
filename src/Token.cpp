@@ -11,32 +11,32 @@
 
 namespace Lexer
 {
-    Token::Token(tokenKind::Kind kind, const std::string& value) :kind(kind), value(value),
+    Token::Token(token::kind::Kind kind, const std::string& value) :kind(kind), value(value),
         type(token::type::toType(value)), filename(""), row(0)
     {}
 
-    Token::Token(tokenKind::Kind kind, std::string value, token::type::Type type) :kind(kind), value(std::move(value)),
+    Token::Token(token::kind::Kind kind, std::string value, token::type::Type type) :kind(kind), value(std::move(value)),
         type(type), filename(""), row(0)
     {}
 
-    Token::Token(const tokenKind::Kind kind, const token::type::Type type) :kind(kind), type(type),
-        value(tokenKind::fromTokenKind(kind)), filename(""), row(0)
+    Token::Token(const token::kind::Kind kind, const token::type::Type type) :kind(kind), type(type),
+        value(token::kind::fromTokenKind(kind)), filename(""), row(0)
     {}
 
     Token::Token(const Lexer::Token& orig) :kind(orig.kind), type(orig.type), value(orig.value),
         filename(orig.filename), row(orig.row)
     {}
 
-    Token::Token(tokenKind::Kind kind, std::string value, std::string filename, uint16_t row) :MOVE(kind), MOVE(value),
+    Token::Token(token::kind::Kind kind, std::string value, std::string filename, uint16_t row) :MOVE(kind), MOVE(value),
         type(token::type::toType(value)), MOVE(filename), row(row)
     {}
 
-    Token::Token(tokenKind::Kind kind, std::string value, token::type::Type type, std::string filename, uint16_t row)
+    Token::Token(token::kind::Kind kind, std::string value, token::type::Type type, std::string filename, uint16_t row)
         :MOVE(kind), MOVE(value), MOVE(type), MOVE(filename), row(row)
     {}
 
-    Token::Token(tokenKind::Kind kind, token::type::Type type, std::string filename, uint16_t row)
-        :MOVE(kind), value(tokenKind::fromTokenKind(kind)), MOVE(type), MOVE(filename), row(row)
+    Token::Token(token::kind::Kind kind, token::type::Type type, std::string filename, uint16_t row)
+        :MOVE(kind), value(token::kind::fromTokenKind(kind)), MOVE(type), MOVE(filename), row(row)
     {}
 
     Token::~Token()
@@ -44,7 +44,7 @@ namespace Lexer
 
     void Token::print()
     {
-        std::cerr << value << " | " << tokenKind::fromTokenKind(kind)
+        std::cerr << value << " | " << token::kind::fromTokenKind(kind)
                   << " | " << token::type::fromTokenType(type) << std::endl;
     }
 }
