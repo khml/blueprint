@@ -85,32 +85,34 @@ class Header:
 
 #include <string>
 
-namespace {namespace}
+namespace token
 {{
-{content}
-    Kind toTokenKind(const std::string& val);
-    
-    Kind toTokenKind(const std::string&& val);
-    
-    std::string fromTokenKind(Kind val);
+    namespace kind
+    {{
+    {content}
+        Kind toTokenKind(const std::string& val);
+        
+        Kind toTokenKind(const std::string&& val);
+        
+        std::string fromTokenKind(Kind val);
+    }}
 }}
-
 #endif //BLUEPRINT_TOKEN_KIND_HPP
 """
 
     ENUM_TEMPLATE = """\
     enum Kind
-    {{\
-{impl}
+        {{\
+    {impl}
         LINE_START,
-    }};
+        }};
 """
 
     ITEM_FORMAT = "\n        {kind}, /* {value} */"
     ITEM_FORMAT_FOR_COMMENT_TOKEN = "\n        {kind}, // {value}"
 
     def __init__(self):
-        header_content = self.HEADER_TEMPLATE.format(namespace=NAME_SPACE, content=self._enum)
+        header_content = self.HEADER_TEMPLATE.format(content=self._enum)
         with open(HEADER_FILE_NAME, "w") as f:
             f.write(header_content)
 
@@ -133,47 +135,50 @@ class Impl:
 
 #include "TokenKind.hpp"
 
-namespace {namespace}
+namespace token
 {{
-{content}\
-    Kind toTokenKind(const std::string&& val)
+    namespace kind
     {{
-        return toTokenKind(val);
+    {content}\
+        Kind toTokenKind(const std::string&& val)
+        {{
+            return toTokenKind(val);
+        }}
     }}
 }}
 """
 
     SWITCH_FORMAT = """\
-    {return_type} {name}({arg_type} val)
-    {{
-        switch (val)
+        {return_type} {name}({arg_type} val)
         {{
-            case LINE_START:
-                return "LINE_START";
+            switch (val)
+            {{
+                case LINE_START:
+                    return "LINE_START";
 {impl}
-        }}
-    }};
+            }}
+        }};
 
 """
 
     CASE_FORMAT = """\
-            {case}:
-                return {value};
+                {case}:
+                    return {value};
 """
 
     MAP_FORMAT = """\
     static std::map<std::string, Kind> toTokenKindMap()
-    {{
-        return std::map<std::string, Kind> {{
+        {{
+            return std::map<std::string, Kind>{{
 {impl}\
-        }};
-    }}
+            }};
+        }}
 
 """
 
     def __init__(self):
         impl_content = self._map + self._to_enum + self._to_str
-        impl_content = self.IMPL_TEMPLATE.format(namespace=NAME_SPACE, content=impl_content)
+        impl_content = self.IMPL_TEMPLATE.format(content=impl_content)
         with open(IMPL_FILE_NAME, "w") as f:
             f.write(impl_content)
 
@@ -189,24 +194,27 @@ namespace {namespace}
     @property
     def _to_enum(self):
         return """\
-    Kind toTokenKind(const std::string& val)
-    {
-        static std::map<std::string, Kind> dictionary = toTokenKindMap();
-
-        auto iter = dictionary.find(val);
-        if ( iter != end(dictionary) ) {
-            return iter->second;
-        } else {
-            return IDENTIFIER;
-        }
-    };
+        Kind toTokenKind(const std::string& val)
+        {
+            static std::map<std::string, Kind> dictionary = toTokenKindMap();
+    
+            auto iter = dictionary.find(val);
+            if (iter != end(dictionary)) 
+            {
+                return iter->second;
+            } 
+            else 
+            {
+                return IDENTIFIER;
+            }
+        };
 
 """
 
     @property
     def _map(self):
         map_impl = ""
-        item_format = "            {{\"{string}\", {kind}}},\n"
+        item_format = "                {{\"{string}\", {kind}}},\n"
         for kind_name, kind_value in TokenKind.items():
             if kind_name in SPECIAL_TYPES:
                 continue

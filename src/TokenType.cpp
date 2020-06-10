@@ -10,7 +10,7 @@
 using std::string;
 using std::regex;
 using std::regex_match;
-using tokenKind::toTokenKind;
+using token::kind::toTokenKind;
 
 namespace token
 {
@@ -73,7 +73,7 @@ namespace token
             else
             {
                 auto kind = toTokenKind(str);
-                if (kind == tokenKind::IDENTIFIER)
+                if (kind == token::kind::IDENTIFIER)
                     return IDENTIFIER;
                 else
                     return OPERATOR;
