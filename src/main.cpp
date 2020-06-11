@@ -23,9 +23,9 @@ void read_print_loop()
         if (line == "end")
             break;
 
-        Lexer::Tokenizer tokenizer;
+        token::Tokenizer tokenizer;
         auto tokens = tokenizer.tokenize(line);
-        Lexer::printTokens(tokens);
+        token::printTokens(tokens);
 
         auto parser = AST::Parser();
         auto node = parser.parse(tokens);
@@ -43,14 +43,14 @@ void read_file_and_print(const string& filename)
     STD_ERR_LOG("filename:" << filename);
 
     io::FileReader file(filename);
-    Lexer::Tokenizer tokenizer;
+    token::Tokenizer tokenizer;
     auto parser = AST::Parser();
 
     for(auto& line : file.lines())
     {
         STD_ERR_LOG("line: " << line);
         auto tokens = tokenizer.tokenize(line);
-        Lexer::printTokens(tokens);
+        token::printTokens(tokens);
         auto node = parser.parse(tokens);
 #ifdef DEBUG_NODE
         node->print();

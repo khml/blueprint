@@ -7,7 +7,7 @@
 #include "MacroLogger.hpp"
 #include "Tokenizer.hpp"
 
-namespace Lexer
+namespace token
 {
     void printTokens(const std::vector<Token>& tokens)
     {

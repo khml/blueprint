@@ -20,26 +20,26 @@ namespace AST
 
         virtual ~Parser();
 
-        std::unique_ptr<AstNode> parse(std::vector<Lexer::Token> tokenList);
+        std::unique_ptr<AstNode> parse(std::vector<token::Token> tokenList);
 
     protected:
-        std::vector<Lexer::Token> tokens;
+        std::vector<token::Token> tokens;
 
         int tokenHead = 0;
 
         bool hasNext();
 
-        Lexer::Token current();
+        token::Token current();
 
         bool isCurrent(token::kind::Kind kind);
 
-        Lexer::Token next();
+        token::Token next();
 
         bool isNext(token::kind::Kind kind);
 
-        Lexer::Token prev();
+        token::Token prev();
 
-        Lexer::Token consume();
+        token::Token consume();
 
         bool consume(token::kind::Kind expected);
 

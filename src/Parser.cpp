@@ -19,7 +19,7 @@ namespace AST
     Parser::~Parser()
     = default;
 
-    std::unique_ptr<AstNode> Parser::parse(std::vector<Lexer::Token> tokenList)
+    std::unique_ptr<AstNode> Parser::parse(std::vector<token::Token> tokenList)
     {
         tokenHead = 0;
         tokens.clear();
@@ -32,7 +32,7 @@ namespace AST
         return tokenHead + 1 < tokens.size();
     }
 
-    Lexer::Token Parser::current()
+    token::Token Parser::current()
     {
         return tokens[tokenHead];
     }
@@ -42,7 +42,7 @@ namespace AST
         return tokens[tokenHead].kind == kind;
     }
 
-    Lexer::Token Parser::consume()
+    token::Token Parser::consume()
     {
         return tokens[tokenHead++];
     }
@@ -55,7 +55,7 @@ namespace AST
         return isCurrentExpected;
     }
 
-    Lexer::Token Parser::next()
+    token::Token Parser::next()
     {
         return tokens[++tokenHead];
     }
@@ -65,7 +65,7 @@ namespace AST
         return tokens[tokenHead + 1].kind == kind;
     }
 
-    Lexer::Token Parser::prev()
+    token::Token Parser::prev()
     {
         return tokens[tokenHead - 1];
     }
@@ -175,11 +175,11 @@ namespace AST
     {
         LOG_DEBUG("unary");
 
-        static auto productToken = Lexer::Token(token::kind::ASTERISK, "*", token::type::OPERATOR);
+        static auto productToken = token::Token(token::kind::ASTERISK, "*", token::type::OPERATOR);
 
         if (consume(token::kind::SUB))
         {
-            auto unitNode = std::make_unique<AstOpNode>(Lexer::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(token::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
