@@ -9,7 +9,7 @@
 
 #define MOVE(value) value(std::move((value)))
 
-namespace Lexer
+namespace token
 {
     Token::Token(token::kind::Kind kind, const std::string& value) :kind(kind), value(value),
         type(token::type::toType(value)), filename(""), row(0)
@@ -23,7 +23,7 @@ namespace Lexer
         value(token::kind::fromTokenKind(kind)), filename(""), row(0)
     {}
 
-    Token::Token(const Lexer::Token& orig) :kind(orig.kind), type(orig.type), value(orig.value),
+    Token::Token(const token::Token& orig) :kind(orig.kind), type(orig.type), value(orig.value),
         filename(orig.filename), row(orig.row)
     {}
 

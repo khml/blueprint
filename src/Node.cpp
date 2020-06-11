@@ -35,7 +35,7 @@ namespace AST
     }
 #endif
 
-    AstOpNode::AstOpNode(const Lexer::Token& token) :token(token)
+    AstOpNode::AstOpNode(const token::Token& token) :token(token)
     {}
 
     AstOpNode::~AstOpNode()
@@ -60,16 +60,16 @@ namespace AST
     }
 #endif
 
-    VariableNode::VariableNode(const Lexer::Token& token) :AstOpNode(token)
+    VariableNode::VariableNode(const token::Token& token) :AstOpNode(token)
     {}
 
     VariableNode::~VariableNode()
     = default;
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
+    BinaryOpNode::BinaryOpNode(const token::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
     {}
 
-    BinaryOpNode::BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left,
+    BinaryOpNode::BinaryOpNode(const token::Token& token, std::unique_ptr<AstNode> left,
         std::unique_ptr<AstNode> right)
         :AstOpNode(token), left(std::move(left)), right(std::move(right))
     {}
@@ -109,7 +109,7 @@ namespace AST
     }
 #endif
 
-    CalleeNode::CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args) :token(token),
+    CalleeNode::CalleeNode(const token::Token& token, std::vector<std::unique_ptr<AstNode>>& args) :token(token),
         args(std::move(args))
     {}
 

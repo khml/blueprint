@@ -8,7 +8,7 @@
 #include "TokenKind.hpp"
 #include "TokenType.hpp"
 
-namespace Lexer
+namespace token
 {
     class Token
     {

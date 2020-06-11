@@ -10,7 +10,7 @@
 
 #include "Token.hpp"
 
-namespace Lexer
+namespace token
 {
     void printTokens(const std::vector<Token>& tokens);
 
