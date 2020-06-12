@@ -8,38 +8,11 @@
 #include <string>
 #include <vector>
 
-#include "TokenKind.hpp"
-#include "TokenType.hpp"
+#include "Token.hpp"
 
-namespace Lexer
+namespace token
 {
-    class Token
-    {
-    public:
-        Token(tokenKind::Kind kind, const std::string& value);
-
-        Token(tokenKind::Kind kind, std::string value, tokenType::Type type);
-
-        Token(tokenKind::Kind kind, tokenType::Type type);
-
-        Token(tokenKind::Kind kind, std::string value, std::string filename, uint16_t row);
-
-        Token(tokenKind::Kind kind, std::string value, tokenType::Type type, std::string filename, uint16_t row);
-
-        Token(tokenKind::Kind kind, tokenType::Type type, std::string filename, uint16_t row);
-
-        Token(const Token& orig);
-
-        virtual ~Token();
-
-        const tokenKind::Kind kind;
-        const tokenType::Type type;
-        const std::string value;
-        const std::string filename;
-        const uint16_t row;
-
-        void print();
-    };
+    void printTokens(const std::vector<Token>& tokens);
 
     class Tokenizer
     {
@@ -55,9 +28,9 @@ namespace Lexer
         std::vector<Token> tokens;
         int indicator = 0;
 
-        void pushToken(tokenKind::Kind kindVal, const std::string& value, bool isString = false);
+        void pushToken(token::kind::Kind kindVal, const std::string& value, bool isString = false);
 
-        void readMultiCharOperator(tokenKind::Kind kind, const std::string& ch, int size);
+        void readMultiCharOperator(token::kind::Kind kind, const std::string& ch, int size);
 
         void readString(const std::string& mark);
 
@@ -65,8 +38,6 @@ namespace Lexer
 
         void readIdentifier();
     };
-
-    void printTokens(std::vector<Token>& tokens);
 }
 
 #endif //BLUEPRINT_TOKENIZER_HPP

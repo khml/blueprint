@@ -49,7 +49,7 @@ namespace AST
     class AstOpNode : public AstNode
     {
     public:
-        explicit AstOpNode(const Lexer::Token& token);
+        explicit AstOpNode(const token::Token& token);
 
         ~AstOpNode() override;
 
@@ -68,13 +68,13 @@ namespace AST
 #endif
 
     protected:
-        const Lexer::Token token;
+        const token::Token token;
     };
 
     class VariableNode : public AstOpNode
     {
     public:
-        explicit VariableNode(const Lexer::Token& token);
+        explicit VariableNode(const token::Token& token);
 
         ~VariableNode() override;
     };
@@ -82,9 +82,9 @@ namespace AST
     class BinaryOpNode : public AstOpNode
     {
     public:
-        explicit BinaryOpNode(const Lexer::Token& token);
+        explicit BinaryOpNode(const token::Token& token);
 
-        BinaryOpNode(const Lexer::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
+        BinaryOpNode(const token::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
 
         ~BinaryOpNode() override;
 
@@ -109,7 +109,7 @@ namespace AST
     class CalleeNode : public AstNode
     {
     public:
-        CalleeNode(const Lexer::Token& token, std::vector<std::unique_ptr<AstNode>>& args);
+        CalleeNode(const token::Token& token, std::vector<std::unique_ptr<AstNode>>& args);
 
         ~CalleeNode() override;
 
@@ -128,7 +128,7 @@ namespace AST
 #endif
 
     protected:
-        const Lexer::Token token;
+        const token::Token token;
         const std::vector<std::unique_ptr<AstNode>> args;
 
         std::string args_str();
