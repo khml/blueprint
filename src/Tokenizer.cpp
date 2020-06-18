@@ -181,10 +181,4 @@ namespace token
         }
         return tokens;
     }
-
-    void printTokens(std::vector<Token>& tokens)
-    {
-        for (auto token : tokens)
-            token.print();
-    }
 }
