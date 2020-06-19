@@ -28,7 +28,9 @@ namespace token
         std::vector<Token> tokens;
         int indicator = 0;
 
-        void pushToken(token::kind::Kind kindVal, const std::string& value, bool isString = false);
+        void pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
+
+        void pushToken(token::kind::Kind kindVal, const std::string& value);
 
         void readMultiCharOperator(token::kind::Kind kind, const std::string& ch, int size);
 

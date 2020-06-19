@@ -21,17 +21,14 @@ namespace token
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, bool isString)
+    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
-        if (isString)
-            tokens.emplace_back(Token(kindVal, value, token::type::STRING));
-        else
-        {
-            if (kindVal == token::kind::IDENTIFIER)
-                kindVal = token::kind::toTokenKind(value); // check keyword or not
+        tokens.emplace_back(Token(kindVal, value, type));
+    }
 
-            tokens.emplace_back(Token(kindVal, value));
-        }
+    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value)
+    {
+        tokens.emplace_back(Token(kindVal, value));
     }
 
     void Tokenizer::readMultiCharOperator(token::kind::Kind kind, const std::string& ch, const int size)
@@ -72,7 +69,7 @@ namespace token
             if (ch == mark)
             {
                 auto str = lineData.substr(start + 1, (indicator - start - 1));
-                pushToken(token::kind::IDENTIFIER, str, true);
+                pushToken(token::kind::IDENTIFIER, str, token::type::STRING);
                 return;
             }
         }
@@ -96,7 +93,8 @@ namespace token
         }
 
         auto identifier = lineData.substr(start, (indicator - start + 1));
-        pushToken(token::kind::IDENTIFIER, identifier);
+        kind = token::kind::toTokenKind(identifier);
+        pushToken(kind, identifier);
     }
 
     void Tokenizer::readNumber()
