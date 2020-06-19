@@ -11,12 +11,12 @@
 
 namespace token
 {
-    Token::Token(token::kind::Kind kind, const std::string& value) :kind(kind), value(value),
+    Token::Token(const token::kind::Kind kind, std::string value) :kind(kind), MOVE(value),
         type(token::type::toType(value)), filename(""), row(0)
     {}
 
-    Token::Token(token::kind::Kind kind, std::string value, token::type::Type type) :kind(kind), value(std::move(value)),
-        type(type), filename(""), row(0)
+    Token::Token(const token::kind::Kind kind, std::string value, token::type::Type type) :kind(kind),
+        MOVE(value), type(type), filename(""), row(0)
     {}
 
     Token::Token(const token::kind::Kind kind, const token::type::Type type) :kind(kind), type(type),
@@ -27,15 +27,15 @@ namespace token
         filename(orig.filename), row(orig.row)
     {}
 
-    Token::Token(token::kind::Kind kind, std::string value, std::string filename, uint16_t row) :MOVE(kind), MOVE(value),
-        type(token::type::toType(value)), MOVE(filename), row(row)
+    Token::Token(const token::kind::Kind kind, std::string value, std::string filename, const uint16_t row)
+        :MOVE(kind), MOVE(value), type(token::type::toType(value)), MOVE(filename), row(row)
     {}
 
-    Token::Token(token::kind::Kind kind, std::string value, token::type::Type type, std::string filename, uint16_t row)
-        :MOVE(kind), MOVE(value), MOVE(type), MOVE(filename), row(row)
+    Token::Token(const token::kind::Kind kind, std::string value, token::type::Type type, std::string filename,
+        const uint16_t row) :MOVE(kind), MOVE(value), MOVE(type), MOVE(filename), row(row)
     {}
 
-    Token::Token(token::kind::Kind kind, token::type::Type type, std::string filename, uint16_t row)
+    Token::Token(const token::kind::Kind kind, token::type::Type type, std::string filename, const uint16_t row)
         :MOVE(kind), value(token::kind::fromTokenKind(kind)), MOVE(type), MOVE(filename), row(row)
     {}
 
