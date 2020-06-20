@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "MacroLogger.hpp"
 #include "Tokenizer.hpp"
@@ -130,7 +131,7 @@ namespace token
     std::vector<Token> Tokenizer::tokenize(const std::string& line)
     {
         lineData = line;
-        tokens.clear();
+        tokens = std::vector<Token>();
 
         std::string ch;
         token::kind::Kind kind;
@@ -177,6 +178,6 @@ namespace token
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << token::kind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        return tokens;
+        return std::move(tokens);
     }
 }
