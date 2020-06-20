@@ -24,7 +24,12 @@ namespace token
         std::vector<Token> tokenize(const std::string& line);
 
     protected:
-        std::string lineData;
+        virtual Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
+
+        virtual Token token(token::kind::Kind kindVal, const std::string& value);
+
+    private:
+        std::string line;
         std::vector<Token> tokens;
         int indicator = 0;
 
