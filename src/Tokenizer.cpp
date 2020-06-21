@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 
 #include "MacroLogger.hpp"
 #include "Tokenizer.hpp"
@@ -21,29 +22,36 @@ namespace token
     Tokenizer::~Tokenizer()
     = default;
 
-    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, bool isString)
+    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
-        if (isString)
-            tokens.emplace_back(Token(kindVal, value, token::type::STRING));
-        else
-        {
-            if (kindVal == token::kind::IDENTIFIER)
-                kindVal = token::kind::toTokenKind(value); // check keyword or not
+        return Token(kindVal, value, type);
+    }
 
-            tokens.emplace_back(Token(kindVal, value));
-        }
+    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value)
+    {
+        return Token(kindVal, value);
+    }
+
+    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    {
+        tokens.emplace_back(token(kindVal, value, type));
+    }
+
+    void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value)
+    {
+        tokens.emplace_back(token(kindVal, value));
     }
 
     void Tokenizer::readMultiCharOperator(token::kind::Kind kind, const std::string& ch, const int size)
     {
-        if (indicator + size - 1 >= lineData.size())
+        if (indicator + size - 1 >= line.size())
         {
             // end of line
             pushToken(kind, ch);
             return;
         }
 
-        auto multiCharOp = lineData.substr(indicator, size);
+        auto multiCharOp = line.substr(indicator, size);
         auto kindVal = token::kind::toTokenKind(multiCharOp);
 
         if (kindVal == token::kind::IDENTIFIER)
@@ -61,9 +69,9 @@ namespace token
     void Tokenizer::readString(const std::string& mark)
     {
         int start = indicator++;
-        for (; indicator < lineData.size(); indicator++)
+        for (; indicator < line.size(); indicator++)
         {
-            auto ch = lineData.substr(indicator, 1);
+            auto ch = line.substr(indicator, 1);
             if (ch == "\\")
             {
                 indicator++;
@@ -71,8 +79,8 @@ namespace token
             }
             if (ch == mark)
             {
-                auto str = lineData.substr(start + 1, (indicator - start - 1));
-                pushToken(token::kind::IDENTIFIER, str, true);
+                auto str = line.substr(start + 1, (indicator - start - 1));
+                pushToken(token::kind::IDENTIFIER, str, token::type::STRING);
                 return;
             }
         }
@@ -85,9 +93,9 @@ namespace token
         int start = indicator++;
         token::kind::Kind kind;
 
-        for (; indicator < lineData.size(); indicator++)
+        for (; indicator < line.size(); indicator++)
         {
-            kind = token::kind::toTokenKind(lineData.substr(indicator, 1));
+            kind = token::kind::toTokenKind(line.substr(indicator, 1));
             if (kind != token::kind::IDENTIFIER)
             {
                 --indicator;
@@ -95,8 +103,9 @@ namespace token
             }
         }
 
-        auto identifier = lineData.substr(start, (indicator - start + 1));
-        pushToken(token::kind::IDENTIFIER, identifier);
+        auto identifier = line.substr(start, (indicator - start + 1));
+        kind = token::kind::toTokenKind(identifier);
+        pushToken(kind, identifier);
     }
 
     void Tokenizer::readNumber()
@@ -104,9 +113,9 @@ namespace token
         int start = indicator;
         bool isDotAppeared = false;
         std::string ch;
-        for (; indicator < lineData.size(); indicator++)
+        for (; indicator < line.size(); indicator++)
         {
-            ch = lineData.substr(indicator, 1);
+            ch = line.substr(indicator, 1);
             if (ch == ".")
             {
                 // allow dot only once
@@ -124,23 +133,23 @@ namespace token
             else
                 break;
         }
-        ch = lineData.substr(start, indicator - start);
+        ch = line.substr(start, indicator - start);
         pushToken(token::kind::IDENTIFIER, ch);
         --indicator;
     }
 
-    std::vector<Token> Tokenizer::tokenize(const std::string& line)
+    std::vector<Token> Tokenizer::tokenize(const std::string& _line)
     {
-        lineData = line;
-        tokens.clear();
+        line = _line;
+        tokens = std::vector<Token>();
 
         std::string ch;
         token::kind::Kind kind;
 
         LOG_DEBUG(line);
-        for (indicator = 0; indicator < lineData.size(); indicator++)
+        for (indicator = 0; indicator < line.size(); indicator++)
         {
-            ch = lineData.substr(indicator, 1);
+            ch = line.substr(indicator, 1);
             kind = token::kind::toTokenKind(ch);
             LOG_DEBUG("idx: " << indicator << ", kind: " << token::kind::fromTokenKind(kind) << ", ch: " << ch);
             switch (kind)
@@ -179,12 +188,6 @@ namespace token
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << token::kind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        return tokens;
-    }
-
-    void printTokens(std::vector<Token>& tokens)
-    {
-        for (auto token : tokens)
-            token.print();
+        return std::move(tokens);
     }
 }
