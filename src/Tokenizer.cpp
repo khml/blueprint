@@ -138,10 +138,9 @@ namespace token
         --indicator;
     }
 
-    std::vector<Token> Tokenizer::tokenize(const std::string& _line)
+    void Tokenizer::tokenize(const std::string& _line)
     {
         line = _line;
-        tokens = std::vector<Token>();
 
         std::string ch;
         token::kind::Kind kind;
@@ -188,6 +187,12 @@ namespace token
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << token::kind::fromTokenKind(kind) << ", ch: " << ch);
         }
-        return std::move(tokens);
+    }
+
+    std::vector<Token> Tokenizer::result()
+    {
+        std::vector<Token> ret;
+        tokens.swap(ret);
+        return std::move(ret);
     }
 }

@@ -22,9 +22,12 @@ void read_print_loop()
 
         if (line == "end")
             break;
+        if (line.empty())
+            continue;
 
         token::Tokenizer tokenizer;
-        auto tokens = tokenizer.tokenize(line);
+        tokenizer.tokenize(line);
+        auto tokens = tokenizer.result();
         token::printTokens(tokens);
 
         auto parser = AST::Parser();
@@ -49,7 +52,8 @@ void read_file_and_print(const string& filename)
     for(auto& line : file.lines())
     {
         STD_ERR_LOG("line: " << line);
-        auto tokens = tokenizer.tokenize(line);
+        tokenizer.tokenize(line);
+        auto tokens = tokenizer.result();
         token::printTokens(tokens);
         auto node = parser.parse(tokens);
 #ifdef DEBUG_NODE
