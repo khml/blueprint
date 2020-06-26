@@ -22,6 +22,8 @@ void read_print_loop()
 
         if (line == "end")
             break;
+        if (line.empty())
+            continue;
 
         token::Tokenizer tokenizer;
         tokenizer.tokenize(line);
