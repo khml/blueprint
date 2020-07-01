@@ -161,4 +161,40 @@ namespace AST
             dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "arg" << "\" ]" << std::endl;;
     }
 #endif
+
+    StatementsNode::StatementsNode(std::vector<std::unique_ptr<AstNode>>& args) :statements(std::move(args))
+    {}
+
+    StatementsNode::~StatementsNode()
+    = default;
+
+    std::string StatementsNode::str()
+    {
+        return "Statement(s)";
+    }
+
+#ifdef DEBUG_NODE
+    void StatementsNode::print()
+    {
+        std::cerr << "[Statement(s)], ";
+        std::cerr << std::endl;
+        for (auto& item : statements)
+            item->print();
+    }
+#endif
+
+#ifdef DEBUG_GRAPH
+    void StatementsNode::graph(std::ostringstream& dotFile)
+    {
+        dotFile << "  " << objId << " [ label = \"" << str() << "\" ]" << std::endl;
+        for (auto& item : statements)
+            item->graph(dotFile);
+
+        uint16_t count(0);
+        for (auto& item : statements)
+            dotFile << "  " << objId << "->" << item->objId << " [ label = \"" << "Content(" << count++ << ")\" ]"
+                    << std::endl;;
+    }
+#endif
+
 }

@@ -131,6 +131,31 @@ namespace AST
         std::string args_str();
     };
 
+    class StatementsNode : public AstNode
+    {
+    public:
+        explicit StatementsNode(std::vector<std::unique_ptr<AstNode>>& args);
+
+        ~StatementsNode() override;
+
+        std::string str() override;
+
+#ifdef DEBUG_NODE
+
+        void print() override;
+
+#endif
+
+#ifdef DEBUG_GRAPH
+
+        void graph(std::ostringstream& dotFile) override;
+
+#endif
+
+    protected:
+        const std::vector<std::unique_ptr<AstNode>> statements;
+    };
+
 }
 
 #endif //BLUEPRINT_NODE_HPP
