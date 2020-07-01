@@ -10,8 +10,13 @@
 
 namespace AST
 {
+#ifdef DEBUG_GRAPH
     AstNode::AstNode() :objId(objIdCounter++)
     {}
+#else
+    AstNode::AstNode()
+    {}
+#endif
 
     AstNode::~AstNode()
     = default;

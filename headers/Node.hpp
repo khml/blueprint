@@ -6,10 +6,7 @@
 #define BLUEPRINT_NODE_HPP
 
 #include <string>
-
-#ifdef DEBUG_GRAPH
 #include <sstream>
-#endif
 
 #include "Tokenizer.hpp"
 
