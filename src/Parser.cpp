@@ -24,7 +24,7 @@ namespace AST
         tokenHead = 0;
         tokens.clear();
         tokens.swap(tokenList);
-        return std::move(expression());
+        return std::move(program());
     }
 
     bool Parser::hasNext()
@@ -77,6 +77,34 @@ namespace AST
         std::cerr << "expected '" << token::kind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
                   token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
         exit(1);
+    }
+
+    std::unique_ptr<AstNode> Parser::program()
+    {
+        LOG_DEBUG("program");
+
+        std::vector<std::unique_ptr<AstNode>> nodes;
+        while (hasNext() && current().kind != token::kind::BRACE_RIGHT)
+            nodes.emplace_back(statement());
+        return std::move(std::make_unique<StatementsNode>(nodes));
+    }
+
+    std::unique_ptr<AstNode> Parser::statement()
+    {
+        LOG_DEBUG("statement");
+
+        if (consume(token::kind::BRACE_LEFT))
+        {
+            auto statements = program();
+            expect(token::kind::BRACE_RIGHT);
+            return std::move(statements);
+        }
+        else
+        {
+            auto expr = expression();
+            consume(token::kind::SEMICOLON);
+            return std::move(expr);
+        }
     }
 
     std::unique_ptr<AstNode> Parser::expression()
