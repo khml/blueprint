@@ -6,10 +6,7 @@
 #define BLUEPRINT_NODE_HPP
 
 #include <string>
-
-#ifdef DEBUG_GRAPH
 #include <sstream>
-#endif
 
 #include "Tokenizer.hpp"
 
@@ -132,6 +129,31 @@ namespace AST
         const std::vector<std::unique_ptr<AstNode>> args;
 
         std::string args_str();
+    };
+
+    class StatementsNode : public AstNode
+    {
+    public:
+        explicit StatementsNode(std::vector<std::unique_ptr<AstNode>>& args);
+
+        ~StatementsNode() override;
+
+        std::string str() override;
+
+#ifdef DEBUG_NODE
+
+        void print() override;
+
+#endif
+
+#ifdef DEBUG_GRAPH
+
+        void graph(std::ostringstream& dotFile) override;
+
+#endif
+
+    protected:
+        const std::vector<std::unique_ptr<AstNode>> statements;
     };
 
 }

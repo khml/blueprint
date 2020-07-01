@@ -4,7 +4,7 @@
 
 program = statement*
 
-statement = expr | "{" statement* "}"
+statement = expr ";" | "{" program "}"
 
 expr = (identifier “=“ ) equality
 

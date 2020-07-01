@@ -24,7 +24,7 @@ namespace AST
         tokenHead = 0;
         tokens.clear();
         tokens.swap(tokenList);
-        return std::move(expression());
+        return std::move(program());
     }
 
     bool Parser::hasNext()
@@ -68,6 +68,43 @@ namespace AST
     token::Token Parser::prev()
     {
         return tokens[tokenHead - 1];
+    }
+
+    void Parser::expect(token::kind::Kind expectedToken)
+    {
+        if (consume(expectedToken))
+            return;
+        std::cerr << "expected '" << token::kind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
+                  token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
+        exit(1);
+    }
+
+    std::unique_ptr<AstNode> Parser::program()
+    {
+        LOG_DEBUG("program");
+
+        std::vector<std::unique_ptr<AstNode>> nodes;
+        while (hasNext() && current().kind != token::kind::BRACE_RIGHT)
+            nodes.emplace_back(statement());
+        return std::move(std::make_unique<StatementsNode>(nodes));
+    }
+
+    std::unique_ptr<AstNode> Parser::statement()
+    {
+        LOG_DEBUG("statement");
+
+        if (consume(token::kind::BRACE_LEFT))
+        {
+            auto statements = program();
+            expect(token::kind::BRACE_RIGHT);
+            return std::move(statements);
+        }
+        else
+        {
+            auto expr = expression();
+            consume(token::kind::SEMICOLON);
+            return std::move(expr);
+        }
     }
 
     std::unique_ptr<AstNode> Parser::expression()
@@ -179,7 +216,8 @@ namespace AST
 
         if (consume(token::kind::SUB))
         {
-            auto unitNode = std::make_unique<AstOpNode>(token::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
+            auto unitNode = std::make_unique<AstOpNode>(
+                token::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
         }
@@ -196,21 +234,11 @@ namespace AST
         if (current().kind == token::kind::IDENTIFIER)
             return std::move(chain());
 
-        if (!consume(token::kind::PARENTHESIS_LEFT))
-        {
-            std::cerr << "expected '(' but given token-kind=" <<
-                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
-            exit(1);
-        }
+        expect(token::kind::PARENTHESIS_LEFT);
 
         std::unique_ptr<AstNode> node = equality();
 
-        if (!consume(token::kind::PARENTHESISE_RIGHT))
-        {
-            std::cerr << "expected ')' but given token-kind=" <<
-                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
-            exit(1);
-        }
+        expect(token::kind::PARENTHESISE_RIGHT);
 
         return std::move(node);
     }
@@ -247,15 +275,7 @@ namespace AST
     {
         std::vector<std::unique_ptr<AstNode>> arguments;
 
-        auto expect = [this](const token::kind::Kind& expectedToken)
-        {
-            std::cerr << "expected '" << token::kind::fromTokenKind(expectedToken) << "' but given token-kind=" <<
-                      token::kind::fromTokenKind(current().kind) << ", value=" << current().value << std::endl;
-            exit(1);
-        };
-
-        if (!consume(left))
-            expect(left);
+        expect(left);
 
         if (isCurrent(token::kind::PARENTHESISE_RIGHT))
             return std::move(arguments);
@@ -269,8 +289,7 @@ namespace AST
                 break;
         }
 
-        if (!consume(right))
-            expect(right);
+        expect(right);
 
         return std::move(arguments);
     }
