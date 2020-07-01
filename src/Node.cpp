@@ -145,8 +145,9 @@ namespace AST
     void CalleeNode::print()
     {
         std::cerr << "[Callee]: " + str();
-
         std::cerr << std::endl;
+        for (auto& item : args)
+            item->print();
     }
 #endif
 
