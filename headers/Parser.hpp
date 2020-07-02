@@ -43,6 +43,12 @@ namespace AST
 
         bool consume(token::kind::Kind expected);
 
+        void expect(token::kind::Kind expectedToken);
+
+        std::unique_ptr<AstNode> program();
+
+        std::unique_ptr<AstNode> statement();
+
         std::unique_ptr<AstNode> expression();
 
         std::unique_ptr<AstNode> assignment();
