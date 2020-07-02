@@ -45,25 +45,18 @@ void read_file_and_print(const string& filename)
 {
     STD_ERR_LOG("filename:" << filename);
 
-    io::FileReader file(filename);
-    token::Tokenizer tokenizer;
+    token::FileTokenizer tokenizer(filename);
     auto parser = AST::Parser();
-
-    for(auto& line : file.lines())
-    {
-        STD_ERR_LOG("line: " << line);
-        tokenizer.tokenize(line);
-        auto tokens = tokenizer.result();
-        token::printTokens(tokens);
-        auto node = parser.parse(tokens);
+    auto tokens = tokenizer.tokenize();
+    token::printTokens(tokens);
+    auto node = parser.parse(tokens);
 #ifdef DEBUG_NODE
-        node->print();
+    node->print();
 #endif
 #ifdef DEBUG_GRAPH
-        node->graph();
+    node->graph();
 #endif
-        STD_ERR_LOG("");
-    }
+    STD_ERR_LOG("");
 }
 
 int main(int argc, char* argv[])
