@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "MacroLogger.hpp"
+#include "FileReader.hpp"
 #include "Tokenizer.hpp"
 
 namespace token
@@ -194,5 +195,33 @@ namespace token
         std::vector<Token> ret;
         tokens.swap(ret);
         return std::move(ret);
+    }
+
+    FileTokenizer::FileTokenizer(const std::string& filename) :filename(filename), lines(io::readFile(filename))
+    {}
+
+    FileTokenizer::~FileTokenizer()
+    = default;
+
+    std::vector<Token> FileTokenizer::tokenize()
+    {
+        row = 0;
+        tokens = std::vector<Token>();
+
+        for(auto& line : lines)
+        {
+            Tokenizer::tokenize(line);
+            row++;
+        }
+        return std::move(tokens);
+    }
+
+    Token FileTokenizer::token(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    {
+        return Token(kindVal, value, type, filename, row);
+    }
+    Token FileTokenizer::token(token::kind::Kind kindVal, const std::string& value)
+    {
+        return Token(kindVal, value, filename, row);
     }
 }
