@@ -48,6 +48,27 @@ namespace token
 
         void readIdentifier();
     };
+
+    class FileTokenizer : protected Tokenizer
+    {
+    public:
+        explicit FileTokenizer(const std::string& filename);
+
+        ~FileTokenizer() override;
+
+        std::vector<Token> tokenize();
+
+    protected:
+        uint16_t row{};
+
+        Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
+
+        Token token(token::kind::Kind kindVal, const std::string& value) override;
+
+        const std::string filename;
+
+        std::vector<std::string> lines;
+    };
 }
 
 #endif //BLUEPRINT_TOKENIZER_HPP
