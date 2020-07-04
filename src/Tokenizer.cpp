@@ -211,6 +211,16 @@ namespace token
         for(auto& line : lines)
         {
             Tokenizer::tokenize(line);
+            switch (tokens.back().kind)
+            {
+                case token::kind::IDENTIFIER:
+                case token::kind::INCREMENTAL:
+                case token::kind::DECREMENTAL:
+                    tokens.emplace_back(token::Token(token::kind::SEMICOLON, ";"));
+                    break;
+                default:
+                    break;
+            }
             row++;
         }
         return std::move(tokens);
