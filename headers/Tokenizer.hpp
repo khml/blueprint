@@ -26,11 +26,9 @@ namespace token
         std::vector<Token> result();
 
     protected:
-        std::vector<Token> tokens;
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
 
-        virtual Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
-
-        virtual Token token(token::kind::Kind kindVal, const std::string& value);
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value);
 
     private:
         std::string line;
@@ -61,9 +59,9 @@ namespace token
     protected:
         uint16_t row{};
 
-        Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
+        Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
 
-        Token token(token::kind::Kind kindVal, const std::string& value) override;
+        Token makeToken(token::kind::Kind kindVal, const std::string& value) override;
 
         const std::string filename;
 

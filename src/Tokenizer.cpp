@@ -23,24 +23,24 @@ namespace token
     Tokenizer::~Tokenizer()
     = default;
 
-    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    Token Tokenizer::makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
         return Token(kindVal, value, type);
     }
 
-    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value)
+    Token Tokenizer::makeToken(token::kind::Kind kindVal, const std::string& value)
     {
         return Token(kindVal, value);
     }
 
     void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
-        tokens.emplace_back(token(kindVal, value, type));
+        tokens.emplace_back(makeToken(kindVal, value, type));
     }
 
     void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value)
     {
-        tokens.emplace_back(token(kindVal, value));
+        tokens.emplace_back(makeToken(kindVal, value));
     }
 
     void Tokenizer::readMultiCharOperator(token::kind::Kind kind, const std::string& ch, const int size)
@@ -226,11 +226,11 @@ namespace token
         return std::move(tokens);
     }
 
-    Token FileTokenizer::token(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    Token FileTokenizer::makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
         return Token(kindVal, value, type, filename, row);
     }
-    Token FileTokenizer::token(token::kind::Kind kindVal, const std::string& value)
+    Token FileTokenizer::makeToken(token::kind::Kind kindVal, const std::string& value)
     {
         return Token(kindVal, value, filename, row);
     }
