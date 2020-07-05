@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 
-#include "FileReader.hpp"
 #include "Tokenizer.hpp"
 #include "Parser.hpp"
 #include "MacroLogger.hpp"
@@ -26,8 +25,7 @@ void read_print_loop()
             continue;
 
         token::Tokenizer tokenizer;
-        tokenizer.tokenize(line);
-        auto tokens = tokenizer.result();
+        auto tokens = tokenizer.tokenize(line);
         token::printTokens(tokens);
 
         auto parser = AST::Parser();
