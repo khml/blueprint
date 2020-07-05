@@ -21,19 +21,16 @@ namespace token
 
         virtual ~Tokenizer();
 
-        void tokenize(const std::string& line);
-
-        std::vector<Token> result();
+        std::vector<Token> tokenize(const std::string& line);
 
     protected:
-        std::vector<Token> tokens;
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
 
-        virtual Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
-
-        virtual Token token(token::kind::Kind kindVal, const std::string& value);
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value);
 
     private:
         std::string line;
+        std::vector<Token> tokens;
         int indicator = 0;
 
         void pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
@@ -61,9 +58,9 @@ namespace token
     protected:
         uint16_t row{};
 
-        Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
+        Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
 
-        Token token(token::kind::Kind kindVal, const std::string& value) override;
+        Token makeToken(token::kind::Kind kindVal, const std::string& value) override;
 
         const std::string filename;
 
