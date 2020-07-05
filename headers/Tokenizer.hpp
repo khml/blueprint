@@ -21,9 +21,7 @@ namespace token
 
         virtual ~Tokenizer();
 
-        void tokenize(const std::string& line);
-
-        std::vector<Token> result();
+        std::vector<Token> tokenize(const std::string& line);
 
     protected:
         virtual Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
@@ -32,6 +30,7 @@ namespace token
 
     private:
         std::string line;
+        std::vector<Token> tokens;
         int indicator = 0;
 
         void pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
