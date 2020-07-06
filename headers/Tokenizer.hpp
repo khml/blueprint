@@ -21,19 +21,16 @@ namespace token
 
         virtual ~Tokenizer();
 
-        void tokenize(const std::string& line);
-
-        std::vector<Token> result();
+        std::vector<Token> tokenize(const std::string& line);
 
     protected:
-        std::vector<Token> tokens;
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
 
-        virtual Token token(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
-
-        virtual Token token(token::kind::Kind kindVal, const std::string& value);
+        virtual Token makeToken(token::kind::Kind kindVal, const std::string& value);
 
     private:
         std::string line;
+        std::vector<Token> tokens;
         int indicator = 0;
 
         void pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type);
@@ -47,6 +44,27 @@ namespace token
         void readNumber();
 
         void readIdentifier();
+    };
+
+    class FileTokenizer : protected Tokenizer
+    {
+    public:
+        explicit FileTokenizer(const std::string& filename);
+
+        ~FileTokenizer() override;
+
+        std::vector<Token> tokenize();
+
+    protected:
+        uint16_t row{};
+
+        Token makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type) override;
+
+        Token makeToken(token::kind::Kind kindVal, const std::string& value) override;
+
+        const std::string filename;
+
+        std::vector<std::string> lines;
     };
 }
 

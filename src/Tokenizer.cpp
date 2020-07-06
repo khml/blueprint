@@ -2,10 +2,12 @@
 // Created by KHML on 2020/01/08.
 //
 
+#include <algorithm>
 #include <iostream>
 #include <utility>
 
 #include "MacroLogger.hpp"
+#include "FileReader.hpp"
 #include "Tokenizer.hpp"
 
 namespace token
@@ -22,24 +24,24 @@ namespace token
     Tokenizer::~Tokenizer()
     = default;
 
-    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    Token Tokenizer::makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
         return Token(kindVal, value, type);
     }
 
-    Token Tokenizer::token(token::kind::Kind kindVal, const std::string& value)
+    Token Tokenizer::makeToken(token::kind::Kind kindVal, const std::string& value)
     {
         return Token(kindVal, value);
     }
 
     void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
     {
-        tokens.emplace_back(token(kindVal, value, type));
+        tokens.emplace_back(makeToken(kindVal, value, type));
     }
 
     void Tokenizer::pushToken(token::kind::Kind kindVal, const std::string& value)
     {
-        tokens.emplace_back(token(kindVal, value));
+        tokens.emplace_back(makeToken(kindVal, value));
     }
 
     void Tokenizer::readMultiCharOperator(token::kind::Kind kind, const std::string& ch, const int size)
@@ -138,8 +140,9 @@ namespace token
         --indicator;
     }
 
-    void Tokenizer::tokenize(const std::string& _line)
+    std::vector<Token> Tokenizer::tokenize(const std::string& _line)
     {
+        tokens = std::vector<Token>();
         line = _line;
 
         std::string ch;
@@ -187,12 +190,46 @@ namespace token
             }
             LOG_DEBUG("idx: " << indicator << ", kind: " << token::kind::fromTokenKind(kind) << ", ch: " << ch);
         }
+        return std::move(tokens);
     }
 
-    std::vector<Token> Tokenizer::result()
+    FileTokenizer::FileTokenizer(const std::string& filename) :filename(filename), lines(io::readFile(filename))
+    {}
+
+    FileTokenizer::~FileTokenizer()
+    = default;
+
+    std::vector<Token> FileTokenizer::tokenize()
     {
-        std::vector<Token> ret;
-        tokens.swap(ret);
-        return std::move(ret);
+        row = 0;
+        std::vector<Token> allTokens;
+
+        for (auto& line : lines)
+        {
+            std::vector<Token> tokens = Tokenizer::tokenize(line);
+            allTokens.reserve(allTokens.size() + tokens.size());
+            std::move(tokens.begin(), tokens.end(), std::back_inserter(allTokens));
+            switch (allTokens.back().kind)
+            {
+                case token::kind::IDENTIFIER:
+                case token::kind::INCREMENTAL:
+                case token::kind::DECREMENTAL:
+                    allTokens.emplace_back(token::Token(token::kind::SEMICOLON, ";"));
+                    break;
+                default:
+                    break;
+            }
+            row++;
+        }
+        return std::move(allTokens);
+    }
+
+    Token FileTokenizer::makeToken(token::kind::Kind kindVal, const std::string& value, token::type::Type type)
+    {
+        return Token(kindVal, value, type, filename, row);
+    }
+    Token FileTokenizer::makeToken(token::kind::Kind kindVal, const std::string& value)
+    {
+        return Token(kindVal, value, filename, row);
     }
 }
