@@ -53,7 +53,7 @@ TokenKind = OrderedDict([
     # keywords
     ("CLASS", 'class'),
     ("STRUCT", 'struct'),
-    ("CLASS", 'class'),
+    ("FUNCTION", 'fn'),
 
     # primitive types
     ('STRING', 'string'),
