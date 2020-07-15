@@ -2,6 +2,7 @@
 #include <string>
 
 #include "Tokenizer.hpp"
+#include "FileTokenizer.hpp"
 #include "Parser.hpp"
 #include "MacroLogger.hpp"
 
