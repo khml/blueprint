@@ -76,6 +76,38 @@ namespace AST
         ~VariableNode() override;
     };
 
+    class IntNode : public AstOpNode
+    {
+    public:
+        explicit IntNode(const token::Token& token);
+
+        ~IntNode() override;
+    };
+
+    class FloatNode : public AstOpNode
+    {
+    public:
+        explicit FloatNode(const token::Token& token);
+
+        ~FloatNode() override;
+    };
+
+    class DoubleNode : public AstOpNode
+    {
+    public:
+        explicit DoubleNode(const token::Token& token);
+
+        ~DoubleNode() override;
+    };
+
+    class StringNode : public AstOpNode
+    {
+    public:
+        explicit StringNode(const token::Token& token);
+
+        ~StringNode() override;
+    };
+
     class BinaryOpNode : public AstOpNode
     {
     public:
