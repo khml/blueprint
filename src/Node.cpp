@@ -71,6 +71,30 @@ namespace AST
     VariableNode::~VariableNode()
     = default;
 
+    IntNode::IntNode(const token::Token& token) :AstOpNode(token)
+    {}
+
+    IntNode::~IntNode()
+    = default;
+
+    FloatNode::FloatNode(const token::Token& token) :AstOpNode(token)
+    {}
+
+    FloatNode::~FloatNode()
+    = default;
+
+    DoubleNode::DoubleNode(const token::Token& token) :AstOpNode(token)
+    {}
+
+    DoubleNode::~DoubleNode()
+    = default;
+
+    StringNode::StringNode(const token::Token& token) :AstOpNode(token)
+    {}
+
+    StringNode::~StringNode()
+    = default;
+
     BinaryOpNode::BinaryOpNode(const token::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
     {}
 
