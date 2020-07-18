@@ -108,25 +108,24 @@ namespace AST
         ~StringNode() override;
     };
 
-    class BinaryOpNode : public AstOpNode
+    class BinaryOpNode : public AstNode
     {
     public:
-        explicit BinaryOpNode(const token::Token& token);
-
         BinaryOpNode(const token::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
 
         ~BinaryOpNode() override;
+
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 
         void print() override;
 
 #endif
-
+    protected:
+        const token::Token token;
         std::unique_ptr<AstNode> left;
         std::unique_ptr<AstNode> right;
-
-    protected:
 
 #ifdef DEBUG_GRAPH
 

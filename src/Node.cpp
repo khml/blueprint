@@ -95,16 +95,18 @@ namespace AST
     StringNode::~StringNode()
     = default;
 
-    BinaryOpNode::BinaryOpNode(const token::Token& token) :AstOpNode(token), left(nullptr), right(nullptr)
-    {}
-
     BinaryOpNode::BinaryOpNode(const token::Token& token, std::unique_ptr<AstNode> left,
         std::unique_ptr<AstNode> right)
-        :AstOpNode(token), left(std::move(left)), right(std::move(right))
+        :token(token), left(std::move(left)), right(std::move(right))
     {}
 
     BinaryOpNode::~BinaryOpNode()
     = default;
+
+    std::string BinaryOpNode::str()
+    {
+        return left->str() + token.value + right->str();
+    }
 
 #ifdef DEBUG_NODE
     void BinaryOpNode::print()
@@ -126,7 +128,7 @@ namespace AST
 #ifdef DEBUG_GRAPH
     void BinaryOpNode::graph(std::ostringstream& dotFile)
     {
-        AstOpNode::graph(dotFile);
+        dotFile << "  " << objId << " [ label = \"" << token.value << "\" ]" << std::endl;
         if (left != nullptr)
             dotFile << "  " << objId << "->" << left->objId << std::endl;
         if (right != nullptr)
