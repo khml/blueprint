@@ -40,56 +40,56 @@ namespace AST
     }
 #endif
 
-    AstOpNode::AstOpNode(const token::Token& token) :token(token)
+    ValueNode::ValueNode(const token::Token& token) :token(token)
     {}
 
-    AstOpNode::~AstOpNode()
+    ValueNode::~ValueNode()
     = default;
 
-    std::string AstOpNode::str()
+    std::string ValueNode::str()
     {
         return token.value;
     }
 
 #ifdef DEBUG_NODE
-    void AstOpNode::print()
+    void ValueNode::print()
     {
         std::cerr << "node: " << token.value << std::endl;
     }
 #endif
 
 #ifdef DEBUG_GRAPH
-    void AstOpNode::graph(std::ostringstream& dotFile)
+    void ValueNode::graph(std::ostringstream& dotFile)
     {
         dotFile << "  " << objId << " [ label = \"" << token.value << "\" ]" << std::endl;
     }
 #endif
 
-    VariableNode::VariableNode(const token::Token& token) :AstOpNode(token)
+    VariableNode::VariableNode(const token::Token& token) :ValueNode(token)
     {}
 
     VariableNode::~VariableNode()
     = default;
 
-    IntNode::IntNode(const token::Token& token) :AstOpNode(token)
+    IntNode::IntNode(const token::Token& token) :ValueNode(token)
     {}
 
     IntNode::~IntNode()
     = default;
 
-    FloatNode::FloatNode(const token::Token& token) :AstOpNode(token)
+    FloatNode::FloatNode(const token::Token& token) :ValueNode(token)
     {}
 
     FloatNode::~FloatNode()
     = default;
 
-    DoubleNode::DoubleNode(const token::Token& token) :AstOpNode(token)
+    DoubleNode::DoubleNode(const token::Token& token) :ValueNode(token)
     {}
 
     DoubleNode::~DoubleNode()
     = default;
 
-    StringNode::StringNode(const token::Token& token) :AstOpNode(token)
+    StringNode::StringNode(const token::Token& token) :ValueNode(token)
     {}
 
     StringNode::~StringNode()

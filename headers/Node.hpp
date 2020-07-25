@@ -43,12 +43,12 @@ namespace AST
 #endif
     };
 
-    class AstOpNode : public AstNode
+    class ValueNode : public AstNode
     {
     public:
-        explicit AstOpNode(const token::Token& token);
+        explicit ValueNode(const token::Token& token);
 
-        ~AstOpNode() override;
+        ~ValueNode() override;
 
         std::string str() override;
 
@@ -68,7 +68,7 @@ namespace AST
         const token::Token token;
     };
 
-    class VariableNode : public AstOpNode
+    class VariableNode : public ValueNode
     {
     public:
         explicit VariableNode(const token::Token& token);
@@ -76,7 +76,7 @@ namespace AST
         ~VariableNode() override;
     };
 
-    class IntNode : public AstOpNode
+    class IntNode : public ValueNode
     {
     public:
         explicit IntNode(const token::Token& token);
@@ -84,7 +84,7 @@ namespace AST
         ~IntNode() override;
     };
 
-    class FloatNode : public AstOpNode
+    class FloatNode : public ValueNode
     {
     public:
         explicit FloatNode(const token::Token& token);
@@ -92,7 +92,7 @@ namespace AST
         ~FloatNode() override;
     };
 
-    class DoubleNode : public AstOpNode
+    class DoubleNode : public ValueNode
     {
     public:
         explicit DoubleNode(const token::Token& token);
@@ -100,7 +100,7 @@ namespace AST
         ~DoubleNode() override;
     };
 
-    class StringNode : public AstOpNode
+    class StringNode : public ValueNode
     {
     public:
         explicit StringNode(const token::Token& token);
