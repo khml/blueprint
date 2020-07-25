@@ -216,7 +216,7 @@ namespace AST
 
         if (consume(token::kind::SUB))
         {
-            auto unitNode = std::make_unique<AstOpNode>(
+            auto unitNode = std::make_unique<ValueNode>(
                 token::Token(token::kind::IDENTIFIER, "-1", token::type::INTEGER));
             auto left = priority();
             return std::move(MakeBinaryOpNode(productToken, left, unitNode));
@@ -263,7 +263,7 @@ namespace AST
     std::unique_ptr<AstNode> Parser::primary()
     {
         if (!isNext(token::kind::PARENTHESIS_LEFT))
-            return std::move(std::make_unique<AstOpNode>(consume()));
+            return std::move(std::make_unique<ValueNode>(consume()));
 
         auto identifier = consume();
         auto arguments = tuple();
