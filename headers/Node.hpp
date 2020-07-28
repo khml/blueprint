@@ -43,12 +43,12 @@ namespace AST
 #endif
     };
 
-    class AstOpNode : public AstNode
+    class ValueNode : public AstNode
     {
     public:
-        explicit AstOpNode(const token::Token& token);
+        explicit ValueNode(const token::Token& token);
 
-        ~AstOpNode() override;
+        ~ValueNode() override;
 
         std::string str() override;
 
@@ -68,7 +68,7 @@ namespace AST
         const token::Token token;
     };
 
-    class VariableNode : public AstOpNode
+    class VariableNode : public ValueNode
     {
     public:
         explicit VariableNode(const token::Token& token);
@@ -76,25 +76,56 @@ namespace AST
         ~VariableNode() override;
     };
 
-    class BinaryOpNode : public AstOpNode
+    class IntNode : public ValueNode
     {
     public:
-        explicit BinaryOpNode(const token::Token& token);
+        explicit IntNode(const token::Token& token);
 
+        ~IntNode() override;
+    };
+
+    class FloatNode : public ValueNode
+    {
+    public:
+        explicit FloatNode(const token::Token& token);
+
+        ~FloatNode() override;
+    };
+
+    class DoubleNode : public ValueNode
+    {
+    public:
+        explicit DoubleNode(const token::Token& token);
+
+        ~DoubleNode() override;
+    };
+
+    class StringNode : public ValueNode
+    {
+    public:
+        explicit StringNode(const token::Token& token);
+
+        ~StringNode() override;
+    };
+
+    class BinaryOpNode : public AstNode
+    {
+    public:
         BinaryOpNode(const token::Token& token, std::unique_ptr<AstNode> left, std::unique_ptr<AstNode> right);
 
         ~BinaryOpNode() override;
+
+        std::string str() override;
 
 #ifdef DEBUG_NODE
 
         void print() override;
 
 #endif
-
+    protected:
+        const token::Token token;
         std::unique_ptr<AstNode> left;
         std::unique_ptr<AstNode> right;
-
-    protected:
 
 #ifdef DEBUG_GRAPH
 
